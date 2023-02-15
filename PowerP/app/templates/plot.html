@@ -1,0 +1,48 @@
+<!-- Include the Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<!-- Create a canvas element for the chart -->
+<canvas id="chart"></canvas>
+
+<script>
+$.ajax({
+    url: "ThePHP.php",
+    method: "GET",
+    success: function(data) {
+        var wattData = [];
+        var timeData = [];
+        data.forEach(function(datapoint) {
+            wattData.push(datapoint.watts_generated);
+            timeData.push(datapoint.hour_interval);
+        });
+        plotData(wattData, timeData);
+    }
+});
+
+function plotData(wattData, timeData) {
+    // Get the canvas element
+    var ctx = document.getElementById('chart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timeData,
+            datasets: [{
+                label: 'Watt Generated',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: wattData
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+</script>

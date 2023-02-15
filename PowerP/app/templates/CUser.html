@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="CUStyle.css">
+  </head>
+  <body>
+    <!-- HTML code goes here -->
+    <header>
+        <h1>Welcome to Power Partners</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="Home.html">Home</a></li>
+        </ul>
+    </nav>
+    <br></br>
+    <div class="container" style="margin:0 auto; text-align:center;">
+        <h1 style="text-align: center;">Create User</h1>
+        <form>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div class="form-group">
+                <label for="devices">Device Link:</label>
+                <input type="text" id="devices" name="devices">
+            </div>
+            <button type="submit" class="btn">Create User</button>
+        </form>
+    </div>
+  </body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+<script>
+
+    // Get the values from the form fields
+    let username = $("#username").val();
+    let password = $("#password").val();
+    let email = $("#email").val();
+
+    // Send the form data to the PHP script
+    $.ajax({
+    type: "POST",
+    url: "CUser.php",
+    data: {
+        username: username,
+        password: password,
+        email: email
+    },
+    success: function(data) {
+        console.log(data);
+    }
+    });
+
+
+</script>

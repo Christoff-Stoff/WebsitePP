@@ -1,0 +1,207 @@
+<!-- Include the Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+<form id="date-form">
+    <label for="selected-date">Select a date:</label>
+    <input type="date" id="selected-date" name="selected-date" value="2021-01-04">
+    <input type="submit" value="Submit">
+</form>
+  
+<div id="result">
+
+
+<!-- Create a canvas element for the chart -->
+<canvas id="realTimeChart"></canvas>
+
+<script>
+// Script for Hourly.html
+
+// Get the canvas element
+var ctx = document.getElementById('realTimeChart').getContext('2d');
+
+// Create a new chart using the canvas element
+var realTimeChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [],
+        datasets: [{
+            label: 'Generated Energy',
+            data: [],
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'Consumed Energy',
+            data: [],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        },
+        {
+        label: "Excess",
+        data: [],  // excess data calculated as generated - consumption
+        borderColor: "rgb(0,250,154,1)",
+        backgroundColor: "rgba(0,250,154, 0.2)",
+        borderWidth: 1,
+        
+      },]
+  },
+  options: {
+    scales: {
+      
+      xAxes: [{
+        
+        //labels: ['0', '1', '2', '3', '4', '5','6','7','8','9','10', '11', '12', '13', '14', '15','16','17','18','19','20','21','22','23', '24'],
+        scaleLabel: {
+          display: true,
+          labelString: 'Date'
+        },
+        ticks: {
+          min: 0,
+          max: 24,
+          stepSize: 1
+        }
+      }],
+      yAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'Watts'
+        },
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  }
+});
+
+//Set x-axis labels
+//let hours = [0, 1, 2, 3, 4, 5,6,7,8,9,10, 11, 12, 13, 14, 15,16,17,18,19,20,21,22,23, 24];
+//realTimeChart.data.labels = hours;
+
+// Add data to the chart and plot it
+function addData(date, generated_power, consumed_power,excess_power) {
+  realTimeChart.data.labels.push(date);
+  realTimeChart.data.datasets[0].data.push(generated_power);
+  realTimeChart.data.datasets[1].data.push(consumed_power);
+  realTimeChart.data.datasets[2].data.push(excess_power);
+  realTimeChart.update();
+}
+
+
+// Clear the plot
+function clearPlot() {
+  realTimeChart.data.datasets[0].data = [];
+  realTimeChart.data.datasets[1].data = [];
+  realTimeChart.data.labels = [];
+  realTimeChart.update();
+}
+
+// Function to obtain data at each interval and plot it
+// This function will only be used in the case the user selects the current date
+function updateChart() {
+$.ajax({
+    url: "monthlyQ.php",
+    method: "GET",
+    success: function(data) {
+        
+        data = JSON.parse(data);
+        var generated_power_sum;
+        var date ;
+        var consumed_power_sum;
+        clearPlot();
+        for (var i in data) {
+          console.log(data[i])
+          generated_power_sum=parseFloat(data[i].generated_power_sum);
+            date=data[i].year+"-"+data[i].month.toString().padStart(2, '0');
+            consumed_power_sum=parseFloat(data[i].consumed_power_sum)
+            excess_power_sum=parseFloat(data[i].excess_power_sum)
+            addData(date, generated_power_sum,consumed_power_sum),excess_power_sum;
+        }
+        
+        
+    }
+});
+}
+
+//Code for submitting date spesified by the user and plot it:
+// Handle form submit
+document.getElementById("date-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  // Get the selected date
+  var selectedDate = document.getElementById("selected-date").value;
+
+  // Make the AJAX call
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "monthlyQ.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function() {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      // Display the result in the HTML
+      var data = JSON.parse(this.responseText);
+      clearPlot();
+      plotMonthly(data);      
+      //document.getElementById("result").innerHTML = this.responseText;
+      
+      
+    }
+  };
+  xhr.send("selected-date=" + selectedDate);
+});
+
+//Plot the hourly data
+function plotMonthly(data)
+{
+    
+  var generated_power_sum;
+  var date ;
+  var consumed_power_sum;
+
+  var gen_sum_total=0;
+  var cons_sum_total=0;
+  clearPlot();
+  for (var i in data) {
+    console.log(data[i])
+    generated_power_sum=parseFloat(data[i].generated_power_sum);
+    date=data[i].year+"-"+data[i].month.toString().padStart(2, '0');
+    consumed_power_sum=parseFloat(data[i].consumed_power_sum)
+    excess_power_sum=parseFloat(data[i].excess_power_sum)
+    addData(date, generated_power_sum,consumed_power_sum,excess_power_sum);
+  
+    gen_sum_total+=generated_power_sum;
+    cons_sum_total+=consumed_power_sum;
+  }
+
+  //***** kWh Price ******
+  var someCostPerUnit=2.5;
+  //*************
+
+  //Displayed data on site
+  let totalGenerated = gen_sum_total;
+  let totalConsumption = cons_sum_total;
+  let totalExcess = totalGenerated - totalConsumption;
+  let totalSavings = (totalGenerated/1000) * someCostPerUnit;
+
+  // now display the values in the desired format, for example:
+  document.getElementById("generated").innerHTML = (totalGenerated/1000).toFixed(2) +" kWh";
+  document.getElementById("consumption").innerHTML = (totalConsumption/1000).toFixed(2) +" kWh";
+  document.getElementById("excess").innerHTML = (totalExcess/1000).toFixed(2) +" kWh";
+  document.getElementById("savings").innerHTML = "R "+(totalSavings).toFixed(2);
+
+}
+
+// update the chart every 10 seconds
+//setInterval(updateChart, 10000);
+</script>
+
+
+<div id="summary" style="text-align:center; ">
+  <p> Total Generated: <span id="generated"></span> &emsp;
+  Total Consumption: <span id="consumption"></span> &emsp;
+  Total Excess: <span id="excess"></span> &emsp;
+  Total Savings: <span id="savings"></span></p>
+</div>
+</div>

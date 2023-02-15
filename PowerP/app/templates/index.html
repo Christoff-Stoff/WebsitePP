@@ -1,0 +1,8 @@
+{% extends "base.html"%}
+
+{% block content %}
+    <h1> Hi, {{ current_user.username }}!</h1>
+    {% for device in devices %}
+    <div><p>{{ device.owner.username }} owns device: <b>{{ device.Device_Name}}</b></p></div>
+    {% endfor %}
+{% endblock %}

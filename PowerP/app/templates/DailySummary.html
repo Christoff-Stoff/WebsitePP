@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <!-- HTML code goes here -->
+    <header>
+        <h1>Welcome to Power Partners</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="Home">Home</a></li>
+        </ul>
+    </nav>
+    <br></br>
+    <div class="container">
+        <h1 style="text-align: center;">Hourly Energy Usage Plot</h1>
+        <div id="chart-container" style="text-align: center;">
+
+            <object data="http://localhost:8888/hourly.html"
+                width="72%"
+                height="650"
+                type="image/jpeg"
+                overflow= "hidden">
+            </object>
+        </div>
+    </div>
+    <div class="container">
+      <h1 style="text-align: center;">Daily Energy Usage Plot</h1>
+      <div id="chart-container" style="text-align: center;">
+          <object data="http://localhost:8888/daily.html"
+              width="72%"
+              height="650"
+              type="image/jpeg"
+              overflow= "hidden">
+          </object>
+      </div>
+    </div>
+    <div class="container">
+      <h1 style="text-align: center;">Monthly Energy Usage Plot</h1>
+      <div id="chart-container" style="text-align: center;">
+        
+          <object data="http://localhost:8888/monthly.html"
+              width="72%"
+              height="650"
+              type="image/jpeg"
+              overflow= "hidden">
+          </object>
+      </div>
+    </div>
+      
+  </body>
+</html>
