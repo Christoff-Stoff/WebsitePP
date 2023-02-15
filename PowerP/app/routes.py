@@ -5,6 +5,7 @@ from flask_login import current_user, login_user, logout_user,login_required
 from app.models import User
 from werkzeug.urls import url_parse
 
+
 #This can and probably should be changed to /Home, but keep @app.route('/') to display home page when no route is entered or directed to
 @app.route('/')
 @app.route('/index')
@@ -64,9 +65,8 @@ def register():
 
 @app.route('/Home')
 def Home():
-
     return render_template("Home.html", title='HomePage')
+
 @app.route('/Summary')
 def DSUm():
-
     return render_template("DailySummary.html", title='Summary Page')
