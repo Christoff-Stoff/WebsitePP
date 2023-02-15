@@ -6,6 +6,9 @@ from app.models import User
 from werkzeug.urls import url_parse
 
 
+from flask import Flask, request, jsonify
+import mysql.connector
+
 #This can and probably should be changed to /Home, but keep @app.route('/') to display home page when no route is entered or directed to
 @app.route('/')
 @app.route('/index')
@@ -70,3 +73,39 @@ def Home():
 @app.route('/Summary')
 def DSUm():
     return render_template("DailySummary.html", title='Summary Page')
+
+#### DB Setup, Note this is just a test db and the correct DB is setup in the config.py #####
+# The reason for this DB is just for testing purposes
+servername = "127.0.0.1"
+username = "root"
+password = "PowerPartners1"
+dbname = "SystemSchema"
+
+@app.route('/hourly', methods=['POST'])
+def get_hourly_data():
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+    # Filter the data for the date supplied by the user
+    selected_date = request.form.get('selected-date')
+    query = "SELECT generated_power,date,consumed_power,excess_power FROM HourlySummary WHERE date BETWEEN %s AND %s"
+    query_params = (f"{selected_date} 00:00:00", f"{selected_date} 23:00:00")
+    cursor.execute(query, query_params)
+    result = cursor.fetchall()
+
+    # Close the database connection
+    cursor.close()
+    cnx.close()
+
+    # Create a list of dictionaries to store the data
+    data = [{'generated_power': row[0], 'date': row[1], 'consumed_power': row[2], 'excess_power': row[3]} for row in result]
+
+    # Return the data as JSON
+    return jsonify(data)
+
+@app.route('/renHourly')
+def renHourly():
+    return render_template("Hourly.html")

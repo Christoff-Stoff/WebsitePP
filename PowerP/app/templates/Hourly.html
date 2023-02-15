@@ -107,9 +107,9 @@ function clearPlot() {
 
 // Function to obtain data at each interval and plot it
 // This function will only be used in the case the user selects the current date
-function updateChart() {
+/* function updateChart() {
 $.ajax({
-    url: "QDB.php",
+    url: "hourly",
     method: "GET",
     success: function(data) {
         
@@ -131,7 +131,7 @@ $.ajax({
         
     }
 });
-}
+} */
 
 //Code for submitting date spesified by the user and plot it:
 // Handle form submit
@@ -143,7 +143,7 @@ document.getElementById("date-form").addEventListener("submit", function(event) 
 
   // Make the AJAX call
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "QDB.php", true);
+  xhr.open("POST", "hourly", true);
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.onreadystatechange = function() {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -158,6 +158,8 @@ document.getElementById("date-form").addEventListener("submit", function(event) 
   };
   xhr.send("selected-date=" + selectedDate);
 });
+
+
 
 //Plot the hourly data
 function plotHourly(data)
