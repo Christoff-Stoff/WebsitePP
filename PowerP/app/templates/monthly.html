@@ -136,7 +136,7 @@ document.getElementById("date-form").addEventListener("submit", function(event) 
 
   // Make the AJAX call
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "monthlyQ.php", true);
+  xhr.open("POST", "monthly", true);
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.onreadystatechange = function() {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {

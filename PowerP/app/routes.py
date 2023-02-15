@@ -147,3 +147,36 @@ def get_daily_data():
 def renDaily():
     return render_template("daily.html")
 #########    daily flask End       ######
+
+
+#########    Monthly flask start       ######
+#Monthly flask query data and return json
+@app.route('/monthly', methods=['POST'])
+def get_monthly_data():
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+    # Filter the data for the date supplied by the user
+    selected_date = request.form.get('selected-date')
+    query = "SELECT generated_power_sum,year,month,consumed_power_sum,excess_power_sum FROM MonthlySummary m WHERE m.year = Year(%s)"
+    cursor.execute(query, (selected_date,))
+    result = cursor.fetchall()
+
+    # Close the database connection
+    cursor.close()
+    cnx.close()
+
+    # Create a list of dictionaries to store the data
+    data = [{'generated_power_sum': row[0], 'year': row[1],'month':row[2], 'consumed_power_sum': row[3], 'excess_power_sum': row[4]} for row in result]
+
+    # Return the data as JSON
+    return jsonify(data)
+
+# Render Monthly javascript and return rendered html
+@app.route('/renMonthly')
+def renMonthly():
+    return render_template("monthly.html")
+#########    Monthly flask End       ######
