@@ -81,6 +81,9 @@ username = "root"
 password = "PowerPartners1"
 dbname = "SystemSchema"
 
+
+#########    Hourly flask start       ######
+#Hourly flask query data and return json
 @app.route('/hourly', methods=['POST'])
 def get_hourly_data():
 
@@ -106,6 +109,41 @@ def get_hourly_data():
     # Return the data as JSON
     return jsonify(data)
 
+# Render Hourly javascript and return rendered html
 @app.route('/renHourly')
 def renHourly():
     return render_template("Hourly.html")
+#########    Hourly flask End       ######
+
+
+#########    Daily flask start       ######
+#Daily flask query data and return json
+@app.route('/daily', methods=['POST'])
+def get_daily_data():
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+    # Filter the data for the date supplied by the user
+    selected_date = request.form.get('selected-date')
+    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM DailySummary WHERE MONTH(date) = MONTH(%s)"
+    cursor.execute(query, (selected_date,))
+    result = cursor.fetchall()
+
+    # Close the database connection
+    cursor.close()
+    cnx.close()
+
+    # Create a list of dictionaries to store the data
+    data = [{'generated_power_sum': row[0], 'date': row[1].strftime('%Y-%m-%d'), 'consumed_power_sum': row[2], 'excess_power_sum': row[3]} for row in result]
+
+    # Return the data as JSON
+    return jsonify(data)
+
+# Render Daily javascript and return rendered html
+@app.route('/renDaily')
+def renDaily():
+    return render_template("daily.html")
+#########    daily flask End       ######

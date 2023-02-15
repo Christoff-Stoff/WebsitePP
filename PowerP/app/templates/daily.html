@@ -104,7 +104,7 @@
     // This function will only be used in the case the user selects the current date
     function updateChart() {
     $.ajax({
-        url: "dailyQ.php",
+        url: "daily",
         method: "GET",
         success: function(data) {
             
@@ -138,7 +138,7 @@
 
       // Make the AJAX call
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "dailyQ.php", true);
+      xhr.open("POST", "daily", true);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       xhr.onreadystatechange = function() {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
