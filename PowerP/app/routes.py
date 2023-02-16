@@ -1,6 +1,6 @@
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user,login_required
 from app.models import User
 from werkzeug.urls import url_parse
@@ -44,6 +44,23 @@ def login():
             next_page =url_for('index')
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/login2')
+def login2():
+    return render_template('login2.html')
+@app.route('/loginInfo', methods=['POST'])
+def loginInfo():
+    user = User.query.filter_by(username=request.form['username']).first()
+    if user is None or not user.check_password(request.form['password-field']):
+        flash('Invalid username or password')
+        return redirect(url_for('login'))
+    login_user(user, remember=False)
+    next_page = request.args.get('next')
+    if not next_page or url_parse(next_page).netloc != '':
+        next_page =url_for('index')
+    return redirect(next_page)
+
+
 
 #Logs the user out
 @app.route('/logout')
@@ -113,14 +130,19 @@ def get_hourly_data():
 @app.route('/renHourly')
 def renHourly():
     return render_template("Hourly.html")
-#########    Hourly flask End       ######
+#----------    Hourly flask End   --------#
 
 
 #########    Daily flask start       ######
 #Daily flask query data and return json
 @app.route('/daily', methods=['POST'])
 def get_daily_data():
-
+    """
+    Skryf code om die volgende te doen (Die code is om die current user se id tekry, dan die device wat daai current user match en dan die data vir daai device en die selected date)
+    User{}=Select * From User where username = current.user
+    UDevice= Select DeviceID From Device where User_ID = User[ID]
+    Select * From hourly where hourl.Device_ID = UDevice AND Date = SelectedDate
+    """
     # Connect to database server
     cnx = mysql.connector.connect(user=username, password=password,
                                   host=servername, database=dbname)
@@ -146,7 +168,7 @@ def get_daily_data():
 @app.route('/renDaily')
 def renDaily():
     return render_template("daily.html")
-#########    daily flask End       ######
+#-------------    daily flask End   ----------#
 
 
 #########    Monthly flask start       ######
@@ -179,4 +201,25 @@ def get_monthly_data():
 @app.route('/renMonthly')
 def renMonthly():
     return render_template("monthly.html")
-#########    Monthly flask End       ######
+#---------    Monthly flask End     ----------#
+
+
+########## Route to add device for logged in user to the db #######
+
+@app.route('/add_device', methods=['POST'])
+def add_device():
+    # Get the current user ID from the session
+    user_id = current_user
+
+    # Get the device information from the form
+    device_id = request.form['device_id']
+    device_name = request.form['device_name']
+
+    # Add the device to the database
+    db.add_device(user_id, device_id, device_name)
+
+    # Redirect the user to a page that displays their devices
+    return redirect(url_for('devices'))
+
+
+#-------- Route add device end ----------
