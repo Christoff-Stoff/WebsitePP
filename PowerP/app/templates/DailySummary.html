@@ -1,20 +1,62 @@
 <!DOCTYPE html>
 <html>
   <head>
+
     <link rel="stylesheet" type="text/css" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="{{url_for('static', filename='css/owl.carousel.min.css')}}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    
+    <!-- Style -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    
   </head>
-  <body>
-    <!-- HTML code goes here -->
-    <header>
-        <h1>Welcome to Power Partners</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="Home">Home</a></li>
-        </ul>
-    </nav>
+
+
+
+
+  <div data-role="header" data-position="fixed">
+    <header class="site-navbar" role="banner" style="background-color: gray; background: fill;margin-top: 0;">
+
+        <div class="container">
+          <div class="row align-items-center">
+            
+            <div class="col-11 col-xl-2">
+              <h1 class="mb-0 site-logo"><a href="https://powerpartners.co.za" class="text-white mb-0"><img src="{{url_for('static', filename='images/Logo.png')}}" alt="Power Partners" style="width:200px;height:100px;"></a></h1>
+              
+            </div>
+            <div class="col-12 col-md-10 d-none d-xl-block">
+              <nav class="site-navigation position-relative text-right" role="navigation">
+  
+                <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+                  
+                  <li><a href="Summary"><span>Daily Summary</span></a></li>
+                  <li><a href="login"><span>Login</span></a></li>
+                  <li><a href="blog.html"><span>Blog</span></a></li>
+                  <li><a href="contact.html"><span>Contact</span></a></li>
+                </ul>
+              </nav>
+            </div>
+  
+  
+            <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a></div>
+  
+            </div>
+  
+          </div>
+        </div>
+        
+      </header>
+</div>
+
+  <body >
     <br></br>
-    <div class="container">
+    <div class="container"style="margin-top: 150px;">
         <h1 style="text-align: center;">Hourly Energy Usage Plot</h1>
         <div id="chart-container" style="text-align: center;">
 
