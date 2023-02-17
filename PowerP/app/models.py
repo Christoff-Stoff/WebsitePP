@@ -29,7 +29,14 @@ class Device(db.Model):
     serial = db.Column(db.String(120), index=True, unique=True) #Device Serial number, NOTE: Serial number is unique, this is how we track and link data to the device
     #Device_Location = db.Column(db.String(140)) -> Add and update the db if the implementation of giving live weather wants to be added
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+    #Below we define the realationship to the device and the summaries.
+    #The reason for this is we can create a Device object and can easily retrieve the summaries by just calling objectName.hourly_summaries.all()
     data = db.relationship('Device_Data', backref= 'device', lazy='dynamic')
+    hourly_summaries = db.relationship('Hourly_Summary', backref='device', lazy='dynamic')
+    daily_summaries = db.relationship('Daily_Summary', backref='device', lazy='dynamic')
+    monthly_summaries = db.relationship('Monthly_Summary', backref='device', lazy='dynamic')
+    yearly_summaries = db.relationship('Yearly_Summary', backref='device', lazy='dynamic')
 
     def __repr__(self): # For debugging purposes, will return <Device "Device_Name">
         return '<Device {}>'.format(self.Device_Name)

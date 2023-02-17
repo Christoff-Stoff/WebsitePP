@@ -1,0 +1,41 @@
+<nav style="background-color: aquamarine;">
+    {% extends "base.html" %}
+</nav>
+
+
+
+    {% block content %}
+
+    <!-- HTML form for adding a device -->
+    <section>
+        <div class="container"style="margin-top: 150px;"></div>
+        <body>
+            <form method="post" action="{{ url_for('add_device') }}">
+                <p>
+    
+                    <label for="device_name">Device Name:</label>
+                    <input type="text" id="device_name" name="device_name">
+                </p>
+                <p>
+                    <label for="device_type">Device Type:</label>
+                    <input type="text" id="device_type" name="device_type">
+                </p>
+                <button type="submit">Add Device</button>
+            </form>
+            
+            <!-- HTML for displaying a user's devices -->
+            <h2>Your Devices</h2>
+            <ul>
+                {% for device in devices %}
+                <li>{{ device['device_name'] }} ({{ device['device_type'] }})</li>
+                {% endfor %}
+            </ul>
+        </body>
+    </div>
+    </section>
+    {% endblock %}
+
+
+
+
+  

@@ -206,6 +206,10 @@ def renMonthly():
 
 ########## Route to add device for logged in user to the db #######
 
+@app.route('/addDevice')
+def addDevice():
+    return render_template("AddDevice.html")
+
 @app.route('/add_device', methods=['POST'])
 def add_device():
     # Get the current user ID from the session
@@ -218,8 +222,37 @@ def add_device():
     # Add the device to the database
     db.add_device(user_id, device_id, device_name)
 
+    
+
     # Redirect the user to a page that displays their devices
     return redirect(url_for('devices'))
+
+""" 
+@app.route('/devices', methods=['GET', 'POST'])
+def devices():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
+    # If the form was submitted, add the device to the user's account
+    if request.method == 'POST':
+        device_name = request.form['device_name']
+        device_type = request.form['device_type']
+        user_id = current_user.id
+
+        # Insert the new device into the database
+        cursor = cnx.cursor()
+        query = "INSERT INTO Device (device_name, device_type, user_id) VALUES (%s, %s, %s)"
+        cursor.execute(query, (device_name, device_type, user_id))
+        cnx.commit()
+
+    # Get a list of the user's devices from the database
+    cursor = cnx.cursor()
+    query = "SELECT device_name, device_type FROM Device WHERE user_id = %s"
+    cursor.execute(query, (current_user.id,))
+    devices = [{'device_name': row[0], 'device_type': row[1]} for row in cursor.fetchall()]
+
+    # Render the devices.html template, passing in the list of devices
+    return render_template('devices.html', devices=devices) """
 
 
 #-------- Route add device end ----------
