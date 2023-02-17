@@ -13,7 +13,7 @@
             <form method="post" action="{{ url_for('add_device') }}">
                 <p>
     
-                    <label for="device_name">Device Name:</label>
+                    <label for="device_name">Device Serial:</label>
                     <input type="text" id="device_name" name="device_name">
                 </p>
                 <p>
@@ -27,7 +27,7 @@
             <h2>Your Devices</h2>
             <ul>
                 {% for device in devices %}
-                <li>{{ device['device_name'] }} ({{ device['device_type'] }})</li>
+                <li>{{ device['device_name'] }} </li>
                 {% endfor %}
             </ul>
         </body>

@@ -35,8 +35,12 @@
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                           
                           <li><a href="Summary"><span>Daily Summary</span></a></li>
+                          {% if current_user.is_anonymous %}
                           <li><a href="login"><span>Login</span></a></li>
-                          <li><a href="blog.html"><span>Blog</span></a></li>
+                          {% else %}
+                          <li><a href="logout"><span>Logout</span></a></li>
+                          {% endif %}
+                          <li><a href="addDevice"><span>Add Device</span></a></li>
                           <li><a href="contact.html"><span>Contact</span></a></li>
                         </ul>
                       </nav>
