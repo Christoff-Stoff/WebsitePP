@@ -87,9 +87,6 @@ def register():
 def Home():
     return render_template("Home.html", title='HomePage')
 
-@app.route('/Summary')
-def DSUm():
-    return render_template("DailySummary.html", title='Summary Page')
 
 #### DB Setup, Note this is just a test db and the correct DB is setup in the config.py #####
 # The reason for this DB is just for testing purposes
@@ -97,6 +94,38 @@ servername = "127.0.0.1"
 username = "root"
 password = "PowerPartners1"
 dbname = "SystemSchema"
+
+
+@app.route('/Summary',methods=['GET', 'POST'])
+def DSUm():
+        # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+
+    # Filter the data for the date supplied by the user
+    """ user_id = current_user.id
+    query = "SELECT * FROM Devices WHERE user_id = %s"
+    cursor.execute(query, (current_user.id,))
+    devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
+
+    if request.method == 'POST':
+        device_serial = request.form['device']
+        query = "SELECT id FROM Devices WHERE name = %s"
+        cursor.execute(query, device_serial)
+        device_id = cursor.fetchall()
+        
+       # return render_template('summary.html', devices=devices, selected_device=selected_device, hourly_data=hourly_data) """
+    # Get a list of the user's devices from the database
+
+    query = "SELECT name, id FROM Devices WHERE user_id = %s"
+    cursor.execute(query, (current_user.id,))
+    devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
+
+
+    return render_template("DailySummary.html", title='Summary Page',devices=devices)
+
 
 
 #########    Hourly flask start       ######
@@ -115,6 +144,8 @@ def get_hourly_data():
     query_params = (f"{selected_date} 00:00:00", f"{selected_date} 23:00:00")
     cursor.execute(query, query_params)
     result = cursor.fetchall()
+
+
 
     # Close the database connection
     cursor.close()
@@ -249,9 +280,9 @@ def add_device():
 
     # Get a list of the user's devices from the database
     cursor = cnx.cursor()
-    query = "SELECT name FROM Devices WHERE user_id = %s"
+    query = "SELECT name, id FROM Devices WHERE user_id = %s"
     cursor.execute(query, (current_user.id,))
-    devices = [{'device_name': row[0]} for row in cursor.fetchall()]
+    devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
 
     # Render the devices.html template, passing in the list of devices
     return render_template('AddDevice.html', devices=devices)

@@ -17,8 +17,8 @@
                     <input type="text" id="device_name" name="device_name">
                 </p>
                 <p>
-                    <label for="device_type">Device Type:</label>
-                    <input type="text" id="device_type" name="device_type">
+                    <label for="device_type">Device id:</label>
+                    <input type="text" id="device_id" name="device_type">
                 </p>
                 <button type="submit">Add Device</button>
             </form>
@@ -28,6 +28,7 @@
             <ul>
                 {% for device in devices %}
                 <li>{{ device['device_name'] }} </li>
+                <li>({{ device['device_id'] }})</li>
                 {% endfor %}
             </ul>
         </body>
