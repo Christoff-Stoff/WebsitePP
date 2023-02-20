@@ -138,8 +138,11 @@ def DSUm():
 @app.route('/summaryP',methods=['POST'])
 def SummaryPost():
     selected_date = request.form.get('selected-date')
+    selected_device = request.form.get('device_name')
     session['selected_date'] = selected_date
+    session['selected_device'] =selected_device
     print(selected_date, file=sys.stderr)
+    print(selected_device, file=sys.stderr)
     return None
 
 #########    Hourly flask start       ######
@@ -155,7 +158,7 @@ def get_hourly_data():
     # Filter the data for the date supplied by the user
     selected_date = session.get('selected_date')
     device_name= session.get('selected_device')
-    device_name = "serial123"
+
     query = "SELECT generated_power, date, consumed_power, excess_power FROM HourlySummary hs JOIN Devices d ON hs.device_id = d.id WHERE hs.date BETWEEN %s AND %s AND d.name = %s"
     query_params = (f"{selected_date} 00:00:00", f"{selected_date} 23:00:00", device_name)
     cursor.execute(query, query_params)

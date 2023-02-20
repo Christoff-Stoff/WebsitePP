@@ -57,31 +57,31 @@
         
       </header>
 </div>
-<!-- <form method="POST">
-  <select name="device_name">
-    {% for device in devices %}
-      <option value="{{ device['device_name'] }}">{{ device['device_name'] }}</option>
-      <li>{{ device['device_name'] }} </li>
-    {% endfor %}
-  </select>
-  <input type="date" name="date">
-  <button type="submit">Submit</button>
-</form> -->
+
 
   <body >
     <br></br>
     <div class="container"style="margin-top: 150px;">
+
+        <select id="device-select" name="device_name">
+          {% for device in devices %}
+          <option value="{{ device['device_name'] }}">{{ device['device_name'] }}</option>
+          {% endfor %}
+        </select>
+
       <form id="date-form" >
         <label for="selected-date">Select a date:</label>
         <input type="date" id="selected-date" name="selected-date" value="2021-01-04" >
         <input type="submit" value="Submit" style="border-radius: 10px;">
       </form>
+      
 <script>
   document.getElementById("date-form").addEventListener("submit", function(event) {
   event.preventDefault();
 
   // Get the selected date
   var selectedDate = document.getElementById("selected-date").value;
+  var selectedDevice = document.getElementById("device-select").value;
 
   // Make the AJAX call
   var xhr = new XMLHttpRequest();
@@ -96,7 +96,8 @@
       
     }
   };
-  xhr.send("selected-date=" + selectedDate);
+  xhr.send("selected-date=" + selectedDate+ "&device_name="+selectedDevice);
+  console.log(selectedDevice);
 
 });
 
