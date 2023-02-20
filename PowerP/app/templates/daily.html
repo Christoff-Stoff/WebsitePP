@@ -1,12 +1,10 @@
 <!-- Include the Chart.js library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
-
-<form id="date-form">
-    <label for="selected-date">Select a date:</label>
-    <input type="date" id="selected-date" name="selected-date" value="2021-01-04">
-    <input type="submit" value="Submit">
-</form>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<!-- <button id="refresh-btn">Refresh</button> -->
+<button id="refresh-btn"style="font-size:24px;outline: none;background-color: transparent;border: none;float: right;"> <i class="fa fa-refresh"></i></button>
   
 <div id="result">
 
@@ -130,29 +128,24 @@
 
     //Code for submitting date spesified by the user and plot it:
     // Handle form submit
-    document.getElementById("date-form").addEventListener("submit", function(event) {
-      event.preventDefault();
+    document.getElementById("refresh-btn").addEventListener("click", function(event) {
+  event.preventDefault();
 
-      // Get the selected date
-      var selectedDate = document.getElementById("selected-date").value;
+  // Make the AJAX call
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/daily", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function() {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      // Display the result in the HTML
+      var data = JSON.parse(this.responseText);
+      clearPlot();
+      plotDaily(data);
+    }
+  };
+  xhr.send();
+});
 
-      // Make the AJAX call
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", "daily", true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.onreadystatechange = function() {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-          // Display the result in the HTML
-          var data = JSON.parse(this.responseText);
-          clearPlot();
-          plotDaily(data);      
-          //document.getElementById("result").innerHTML = this.responseText;
-          
-          
-        }
-      };
-      xhr.send("selected-date=" + selectedDate);
-    });
 
     //Plot the hourly data
     function plotDaily(data)

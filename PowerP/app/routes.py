@@ -9,6 +9,9 @@ from werkzeug.urls import url_parse
 from flask import Flask, request, jsonify
 import mysql.connector
 
+
+
+import sys
 #This can and probably should be changed to /Home, but keep @app.route('/') to display home page when no route is entered or directed to
 @app.route('/')
 @app.route('/index')
@@ -96,7 +99,7 @@ password = "PowerPartners1"
 dbname = "SystemSchema"
 
 
-@app.route('/Summary',methods=['GET', 'POST'])
+@app.route('/Summary',methods=['GET'])
 def DSUm():
         # Connect to database server
     cnx = mysql.connector.connect(user=username, password=password,
@@ -118,7 +121,13 @@ def DSUm():
         
        # return render_template('summary.html', devices=devices, selected_device=selected_device, hourly_data=hourly_data) """
     # Get a list of the user's devices from the database
-
+    selected_date = request.form.get('selected-date')
+    session['selected_date'] = selected_date
+    print(selected_date, file=sys.stderr)
+    if request.method == 'POST':
+        selected_device = request.form['device_name']
+        print(selected_device, file=sys.stderr)
+        session['selected_device'] = selected_device
     query = "SELECT name, id FROM Devices WHERE user_id = %s"
     cursor.execute(query, (current_user.id,))
     devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
@@ -126,7 +135,12 @@ def DSUm():
 
     return render_template("DailySummary.html", title='Summary Page',devices=devices)
 
-
+@app.route('/summaryP',methods=['POST'])
+def SummaryPost():
+    selected_date = request.form.get('selected-date')
+    session['selected_date'] = selected_date
+    print(selected_date, file=sys.stderr)
+    return None
 
 #########    Hourly flask start       ######
 #Hourly flask query data and return json
@@ -139,9 +153,11 @@ def get_hourly_data():
     cursor = cnx.cursor()
 
     # Filter the data for the date supplied by the user
-    selected_date = request.form.get('selected-date')
-    query = "SELECT generated_power,date,consumed_power,excess_power FROM HourlySummary WHERE date BETWEEN %s AND %s"
-    query_params = (f"{selected_date} 00:00:00", f"{selected_date} 23:00:00")
+    selected_date = session.get('selected_date')
+    device_name= session.get('selected_device')
+    device_name = "serial123"
+    query = "SELECT generated_power, date, consumed_power, excess_power FROM HourlySummary hs JOIN Devices d ON hs.device_id = d.id WHERE hs.date BETWEEN %s AND %s AND d.name = %s"
+    query_params = (f"{selected_date} 00:00:00", f"{selected_date} 23:00:00", device_name)
     cursor.execute(query, query_params)
     result = cursor.fetchall()
 
@@ -166,7 +182,7 @@ def renHourly():
 
 #########    Daily flask start       ######
 #Daily flask query data and return json
-@app.route('/daily', methods=['POST'])
+@app.route('/daily',  methods=['POST'])
 def get_daily_data():
     """
     Skryf code om die volgende te doen (Die code is om die current user se id tekry, dan die device wat daai current user match en dan die data vir daai device en die selected date)
@@ -178,9 +194,9 @@ def get_daily_data():
     cnx = mysql.connector.connect(user=username, password=password,
                                   host=servername, database=dbname)
     cursor = cnx.cursor()
-
+    print(session.get('selected_date'), file=sys.stderr)
     # Filter the data for the date supplied by the user
-    selected_date = request.form.get('selected-date')
+    selected_date = session.get('selected_date')
     query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM DailySummary WHERE MONTH(date) = MONTH(%s)"
     cursor.execute(query, (selected_date,))
     result = cursor.fetchall()
@@ -196,7 +212,7 @@ def get_daily_data():
     return jsonify(data)
 
 # Render Daily javascript and return rendered html
-@app.route('/renDaily')
+@app.route('/renDaily', methods=['GET'])
 def renDaily():
     return render_template("daily.html")
 #-------------    daily flask End   ----------#
@@ -213,7 +229,8 @@ def get_monthly_data():
     cursor = cnx.cursor()
 
     # Filter the data for the date supplied by the user
-    selected_date = request.form.get('selected-date')
+    selected_date = session.get('selected_date')
+    print(session.get('selected_date'), file=sys.stderr)
     query = "SELECT generated_power_sum,year,month,consumed_power_sum,excess_power_sum FROM MonthlySummary m WHERE m.year = Year(%s)"
     cursor.execute(query, (selected_date,))
     result = cursor.fetchall()
