@@ -137,7 +137,7 @@ $.ajax({
 // Handle form submit
 document.getElementById("refresh-btn").addEventListener("click", function(event) {
   event.preventDefault();
-
+  console.log(" Refresh in Hourly Activated/Pressed");
   // Make the AJAX call
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/hourly", true);
