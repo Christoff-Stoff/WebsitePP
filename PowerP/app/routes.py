@@ -2,16 +2,20 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from flask import render_template, flash, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user,login_required
-from app.models import User
+from app.models import User,Device,Hourly_Summary,Daily_Summary,Monthly_Summary
 from werkzeug.urls import url_parse
 
 
 from flask import Flask, request, jsonify
 import mysql.connector
 
-
+#Debug using:
+#print(ValueToPrint, file=sys.stderr)
 
 import sys
+
+defaultDate="2021-01-01"
+devName= None
 #This can and probably should be changed to /Home, but keep @app.route('/') to display home page when no route is entered or directed to
 @app.route('/')
 @app.route('/index')
@@ -33,6 +37,12 @@ def index():
 #Login route, verifies if the usrer isn't already logged in or if the correct information is supplied
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    users = db.session.query(User).all()
+    Devicess = db.session.query(Device).all()
+    Hourly_Summaries = db.session.query(Hourly_Summary).all()
+    print(Devicess,file = sys.stderr)
+    print(Hourly_Summaries,file=sys.stderr)
+    print(users,file=sys.stderr)
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -96,10 +106,10 @@ def Home():
 servername = "127.0.0.1"
 username = "root"
 password = "PowerPartners1"
-dbname = "SystemSchema"
+dbname = "PP_DB"
 
 
-@app.route('/Summary',methods=['GET'])
+@app.route('/Summary',methods=['GET','POST'])
 def DSUm():
         # Connect to database server
     cnx = mysql.connector.connect(user=username, password=password,
@@ -120,19 +130,29 @@ def DSUm():
         device_id = cursor.fetchall()
         
        # return render_template('summary.html', devices=devices, selected_device=selected_device, hourly_data=hourly_data) """
+    
+
     # Get a list of the user's devices from the database
     selected_date = request.form.get('selected-date')
     session['selected_date'] = selected_date
-    print(selected_date, file=sys.stderr)
-    if request.method == 'POST':
-        selected_device = request.form['device_name']
-        print(selected_device, file=sys.stderr)
-        session['selected_device'] = selected_device
-    query = "SELECT name, id FROM Devices WHERE user_id = %s"
+    
+    selected_device = request.form.get('device_name') or session.get('selected_device')
+    devName= request.form.get('device_name') or session.get('selected_device')
+    session['selected_device'] =selected_device
+    
+
+     
+    query = "SELECT serial, id FROM device WHERE user_id = %s"
     cursor.execute(query, (current_user.id,))
     devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
+    if session.get('selected_device')==None:
+        session['selected_device'] = devices[0]["device_name"]
+        devName =devices[0]["device_name"]
 
-
+    if session.get('selected_date')==None:
+        session['selected_date'] = "2021-01-01"
+    print(session.get('selected_date') + " Summary", file=sys.stderr)
+    print(session.get('selected_device') + " Summary device sent", file=sys.stderr)
     return render_template("DailySummary.html", title='Summary Page',devices=devices)
 
 @app.route('/summaryP',methods=['POST'])
@@ -156,10 +176,13 @@ def get_hourly_data():
     cursor = cnx.cursor()
 
     # Filter the data for the date supplied by the user
-    selected_date = session.get('selected_date')
+    selected_date = request.form.get('selected-date') or session.get('selected_date')
+    device_name = devName or session.get('selected_device')
+
     device_name= session.get('selected_device')
 
-    query = "SELECT generated_power, date, consumed_power, excess_power FROM HourlySummary hs JOIN Devices d ON hs.device_id = d.id WHERE hs.date BETWEEN %s AND %s AND d.name = %s"
+    print(device_name + " Hourly device sent", file=sys.stderr)
+    query = "SELECT generated_power, date, consumed_power, excess_power FROM hourly__summary hs JOIN device d ON hs.device_id = d.id WHERE hs.date BETWEEN %s AND %s AND d.serial = %s"
     query_params = (f"{selected_date} 00:00:00", f"{selected_date} 23:00:00", device_name)
     cursor.execute(query, query_params)
     result = cursor.fetchall()
@@ -197,10 +220,10 @@ def get_daily_data():
     cnx = mysql.connector.connect(user=username, password=password,
                                   host=servername, database=dbname)
     cursor = cnx.cursor()
-    print(session.get('selected_date'), file=sys.stderr)
+    #print(session.get('selected_date'), file=sys.stderr)
     # Filter the data for the date supplied by the user
     selected_date = session.get('selected_date')
-    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM DailySummary WHERE MONTH(date) = MONTH(%s)"
+    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM daily__summary WHERE MONTH(date) = MONTH(%s)"
     cursor.execute(query, (selected_date,))
     result = cursor.fetchall()
 
@@ -233,8 +256,8 @@ def get_monthly_data():
 
     # Filter the data for the date supplied by the user
     selected_date = session.get('selected_date')
-    print(session.get('selected_date'), file=sys.stderr)
-    query = "SELECT generated_power_sum,year,month,consumed_power_sum,excess_power_sum FROM MonthlySummary m WHERE m.year = Year(%s)"
+    #print(session.get('selected_date'), file=sys.stderr)
+    query = "SELECT generated_power_sum,year,month,consumed_power_sum,excess_power_sum FROM monthly__summary m WHERE m.year = Year(%s)"
     cursor.execute(query, (selected_date,))
     result = cursor.fetchall()
 
@@ -294,13 +317,13 @@ def add_device():
 
         # Insert the new device into the database
         cursor = cnx.cursor()
-        query = "INSERT INTO Devices (name, user_id) VALUES (%s, %s)"
+        query = "INSERT INTO device (serial, user_id) VALUES (%s, %s)"
         cursor.execute(query, (device_name, user_id))
         cnx.commit()
 
     # Get a list of the user's devices from the database
     cursor = cnx.cursor()
-    query = "SELECT name, id FROM Devices WHERE user_id = %s"
+    query = "SELECT s, id FROM device WHERE user_id = %s"
     cursor.execute(query, (current_user.id,))
     devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
 

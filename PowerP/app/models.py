@@ -39,7 +39,7 @@ class Device(db.Model):
     yearly_summaries = db.relationship('Yearly_Summary', backref='device', lazy='dynamic')
 
     def __repr__(self): # For debugging purposes, will return <Device "Device_Name">
-        return '<Device {}>'.format(self.Device_Name)
+        return f"<Device id={self.id}, serial={self.serial}, user_id={self.user_id}>"
 
 
 #The data that is pulled for a device
