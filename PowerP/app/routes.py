@@ -44,7 +44,7 @@ def login():
     print(Hourly_Summaries,file=sys.stderr)
     print(users,file=sys.stderr)
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('Home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -54,7 +54,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page =url_for('index')
+            next_page =url_for('Home')
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
@@ -70,7 +70,7 @@ def loginInfo():
     login_user(user, remember=False)
     next_page = request.args.get('next')
     if not next_page or url_parse(next_page).netloc != '':
-        next_page =url_for('index')
+        next_page =url_for('Home')
     return redirect(next_page)
 
 
@@ -79,7 +79,7 @@ def loginInfo():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('Home'))
 
 #Route to register user, if requirements are met user is created and added to the db, then user is redirected to login page
 @app.route('/register', methods=['GET','POST'])
@@ -110,6 +110,7 @@ dbname = "PP_DB"
 
 
 @app.route('/Summary',methods=['GET','POST'])
+@login_required
 def DSUm():
         # Connect to database server
     cnx = mysql.connector.connect(user=username, password=password,
