@@ -150,7 +150,7 @@ def DSUm():
         devName =devices[0]["device_name"]
 
     if session.get('selected_date')==None:
-        session['selected_date'] = "2021-01-01"
+        session['selected_date'] = "2021-01-02"
     print(session.get('selected_date') + " Summary", file=sys.stderr)
     print(session.get('selected_device') + " Summary device sent", file=sys.stderr)
     return render_template("DailySummary.html", title='Summary Page',devices=devices)

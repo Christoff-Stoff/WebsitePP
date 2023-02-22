@@ -72,19 +72,12 @@
           {% endfor %}
         </select>
         <label for="selected-date">Select a date:</label>
-        <input type="date" id="selected-date" name="selected-date" value="2021-01-01" >
+        <input type="date" id="selected-date" name="selected-date" value="2021-01-02" >
         <input id="submit-button" type="submit" value="Submit" style="border-radius: 10px;">
       </form>
-
-      <button id="fresh" type="button"> Refresh</button>
       
 <script>
 
-document.getElementById('fresh').addEventListener('click', function() {
-  var htmlObject = document.getElementById("renHourlyObj");
-  var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
-  buttonR.click();
-});
  document.getElementById('device-select').addEventListener('change', function() {
   document.getElementById('submit-button').click();
   setTimeout(function() {
@@ -142,7 +135,11 @@ document.getElementById('selected-date').addEventListener('change', function() {
   console.log(selectedDevice);
 
 } */
-
+window.onload=function(){
+  var htmlObject = document.getElementById("renHourlyObj");
+  var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
+  buttonR.click();
+};
 
 </script>
       <!-- <select id="device-select" name="device_name">
