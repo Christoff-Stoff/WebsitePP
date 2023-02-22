@@ -5,32 +5,58 @@
 
 
     {% block content %}
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='Table.css')}}">
 
     <!-- HTML form for adding a device -->
     <section>
         <div class="container"style="margin-top: 150px;"></div>
         <body style="background-color:rgb(175, 173, 173)">
+            <br>
+            <br>
             <form method="post" action="{{ url_for('add_device') }}">
                 <p>
-    
-                    <label for="device_name">Device Serial:</label>
-                    <input type="text" id="device_name" name="device_name">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="login-wrap p-0">
+                                <h3 class="mb-4 text-center">Device Serial:</h3>
+                                <!-- <input type="text" id="device_name" name="device_name"> -->
+                                <input type="text" class="form-control" placeholder="Enter device serial number" id="device_name" name="device_name" required>
+                            </p>
+                                <button type="submit" class="form-control btn btn-primary submit px-3">Add Device</button>
+                                <br>
+                                <br>
+                                <br>
+                                <h1>Your Devices</h1>
+                                <table class="rwd-table">
+                                    <tr>
+                                        <th>Device Serial</th>
+                                        <th>Location</th>
+                                        <th>Comments</th>
+                                    </tr>
+                                    {% for device in devices %}
+                                    <tr>
+                                        <td data-th="Device Serial">{{ device['device_name'] }} </td>
+                                        <td data-th="Location">None</td>
+                                        <td data-th="Comments">None</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </p>
                 <p>
-                    <label for="device_type">Device id:</label>
-                    <input type="text" id="device_id" name="device_type">
-                </p>
-                <button type="submit">Add Device</button>
+
             </form>
             
             <!-- HTML for displaying a user's devices -->
-            <h2>Your Devices</h2>
-            <ul>
-                {% for device in devices %}
-                <li>{{ device['device_name'] }} </li>
-                <li>({{ device['device_id'] }})</li>
-                {% endfor %}
-            </ul>
+
         </body>
     </div>
     </section>

@@ -85,7 +85,7 @@ def logout():
 @app.route('/register', methods=['GET','POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('Home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username= form.username.data, email= form.email.data)
@@ -188,7 +188,12 @@ def get_hourly_data():
     cursor.execute(query, query_params)
     result = cursor.fetchall()
 
-
+    # How the qeurie would look for SQLAlchemy
+    """ results = db.session.query(HourlySummary.generated_power, HourlySummary.date, HourlySummary.consumed_power, HourlySummary.excess_power)\
+                    .join(Device, HourlySummary.device_id == Device.id)\
+                    .filter(HourlySummary.date.between(start_date, end_date))\
+                    .filter(Device.serial == device_serial)\
+                    .all() """
 
     # Close the database connection
     cursor.close()
