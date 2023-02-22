@@ -153,6 +153,7 @@ function plotMonthly(data)
 
   var gen_sum_total=0;
   var cons_sum_total=0;
+  var exc_sum_total=0;
   clearPlot();
   for (var i in data) {
     console.log(data[i])
@@ -160,10 +161,14 @@ function plotMonthly(data)
     date=data[i].year+"-"+data[i].month.toString().padStart(2, '0');
     consumed_power_sum=parseFloat(data[i].consumed_power_sum)
     excess_power_sum=parseFloat(data[i].excess_power_sum)
-    addData(date, generated_power_sum,consumed_power_sum,excess_power_sum);
+   
   
     gen_sum_total+=generated_power_sum;
     cons_sum_total+=consumed_power_sum;
+
+    exc_sum_total+=excess_power_sum;
+
+    addData(date, generated_power_sum,consumed_power_sum,excess_power_sum);
   }
 
   //***** kWh Price ******
@@ -173,7 +178,7 @@ function plotMonthly(data)
   //Displayed data on site
   let totalGenerated = gen_sum_total;
   let totalConsumption = cons_sum_total;
-  let totalExcess = totalGenerated - totalConsumption;
+  let totalExcess = exc_sum_total;
   let totalSavings = (totalGenerated/1000) * someCostPerUnit;
 
   // now display the values in the desired format, for example:

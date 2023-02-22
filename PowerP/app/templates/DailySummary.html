@@ -81,11 +81,23 @@
  document.getElementById('device-select').addEventListener('change', function() {
   document.getElementById('submit-button').click();
   setTimeout(function() {
-    var htmlObject = document.getElementById("renHourlyObj");
-    var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
-    buttonR.click();
+    refreshclick();
   }, 200);
 });
+
+function refreshclick()
+{
+  var htmlObject = document.getElementById("renHourlyObj");
+  var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
+  buttonR.click();
+  var htmlObject = document.getElementById("renDailyObj");
+  var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
+  buttonR.click();
+  var htmlObject = document.getElementById("renMonthlyObj");
+  var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
+  buttonR.click();
+}
+
 document.getElementById('selected-date').addEventListener('change', function() {
   document.getElementById('submit-button').click();
   setTimeout(function() {
@@ -136,9 +148,7 @@ document.getElementById('selected-date').addEventListener('change', function() {
 
 } */
 window.onload=function(){
-  var htmlObject = document.getElementById("renHourlyObj");
-  var buttonR = htmlObject.contentWindow.document.getElementById("refresh-btn");
-  buttonR.click();
+  refreshclick();
 };
 
 </script>
@@ -178,7 +188,9 @@ window.onload=function(){
               width="72%"
               height="650"
               type="image/jpeg"
-              overflow= "hidden">
+              overflow= "hidden"
+              id="renDailyObj">
+              
           </object>
       </div>
     </div>
@@ -190,7 +202,8 @@ window.onload=function(){
               width="72%"
               height="650"
               type="image/jpeg"
-              overflow= "hidden">
+              overflow= "hidden"
+              id="renMonthlyObj">
           </object>
       </div>
     </div>

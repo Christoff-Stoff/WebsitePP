@@ -223,8 +223,12 @@ def get_daily_data():
     #print(session.get('selected_date'), file=sys.stderr)
     # Filter the data for the date supplied by the user
     selected_date = session.get('selected_date')
-    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM daily__summary WHERE MONTH(date) = MONTH(%s)"
-    cursor.execute(query, (selected_date,))
+    device_name = devName or session.get('selected_device')
+
+
+
+    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM daily__summary ds JOIN device d ON ds.device_id = d.id WHERE MONTH(ds.date) = MONTH(%s) AND d.serial = %s"
+    cursor.execute(query, (selected_date,device_name))
     result = cursor.fetchall()
 
     # Close the database connection
@@ -256,9 +260,13 @@ def get_monthly_data():
 
     # Filter the data for the date supplied by the user
     selected_date = session.get('selected_date')
+    device_name = devName or session.get('selected_device')
+
+    """ SELECT generated_power, date, consumed_power, excess_power FROM hourly__summary hs JOIN device d ON hs.device_id = d.id WHERE hs.date BETWEEN %s AND %s AND d.serial = %s
+    """
     #print(session.get('selected_date'), file=sys.stderr)
-    query = "SELECT generated_power_sum,year,month,consumed_power_sum,excess_power_sum FROM monthly__summary m WHERE m.year = Year(%s)"
-    cursor.execute(query, (selected_date,))
+    query = "SELECT generated_power_sum,year,month,consumed_power_sum,excess_power_sum FROM monthly__summary ms JOIN device d ON ms.device_id = d.id WHERE ms.year = Year(%s) AND d.serial = %s"
+    cursor.execute(query, (selected_date,device_name))
     result = cursor.fetchall()
 
     # Close the database connection
@@ -267,7 +275,7 @@ def get_monthly_data():
 
     # Create a list of dictionaries to store the data
     data = [{'generated_power_sum': row[0], 'year': row[1],'month':row[2], 'consumed_power_sum': row[3], 'excess_power_sum': row[4]} for row in result]
-
+    print(data[0]['excess_power_sum'], file=sys.stderr)
     # Return the data as JSON
     return jsonify(data)
 
@@ -323,7 +331,7 @@ def add_device():
 
     # Get a list of the user's devices from the database
     cursor = cnx.cursor()
-    query = "SELECT s, id FROM device WHERE user_id = %s"
+    query = "SELECT serial, id FROM device WHERE user_id = %s"
     cursor.execute(query, (current_user.id,))
     devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
 
