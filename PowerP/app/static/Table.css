@@ -51,8 +51,6 @@ body {
   font-family: Montserrat, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  color: #444;
-  background: #eee;
 }
 
 h1 {
@@ -79,5 +77,5 @@ h1 {
   }
 }
 .rwd-table th, .rwd-table td:before {
-  color: #dd5;
+  color: rgb(112, 188, 71);
 }

@@ -4,6 +4,7 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <button id="refresh-btn"style="font-size:24px;outline: none;background-color: transparent;border: none;float: right;"> <i class="fa fa-refresh"></i></button>
+<link rel="stylesheet" href="{{url_for('static', filename='Table.css')}}">
   
 
 
@@ -207,7 +208,7 @@ function plotHourly(data)
   document.getElementById("generated").innerHTML = (totalGenerated/1000).toFixed(2) +" kWh";
   document.getElementById("consumption").innerHTML = (totalConsumption/1000).toFixed(2) +" kWh";
   document.getElementById("excess").innerHTML = (totalExcess/1000).toFixed(2) +" kWh";
-  document.getElementById("savings").innerHTML = "R "+(totalSavings).toFixed(2) +"  @R2.50 per kWh";
+  document.getElementById("savings").innerHTML = "R "+(totalSavings).toFixed(2);
 
 }
 
@@ -216,9 +217,26 @@ function plotHourly(data)
 </script>
 
 <div id="summary" style="text-align:center; ">
-  <p> Total Generated: <span id="generated"></span> &emsp;
+  <!-- <p> Total Generated: <span id="generated"></span> &emsp;
   Total Consumption: <span id="consumption"></span> &emsp;
   Total Excess: <span id="excess"></span> &emsp;
-  Total Savings: <span id="savings"></span></p>
+  Total Savings: <span id="savings"></span></p> -->
+
+  <table class="rwd-table" style="  margin-left: 9%;
+  margin-right: 1%;">
+    <tr>
+        <th style="color: rgb(255, 99, 132, 1);">Total Generated:</th>
+        <th style="color: rgb(54, 162, 235, 1);">Total Consumption:</th>
+        <th style="color: rgb(0,250,154,1);">Total Excess:</th>
+        <th>Total Savings:</th>
+    </tr>
+    <tr>
+        <td data-th="Total Generated"> <span id="generated"></span> </td>
+        <td data-th="Total Consumption"> <span id="consumption"></span> </td>
+        <td data-th="Total Excess"> <span id="excess"></span> </td>
+        <td data-th="Total Savings"> <span id="savings"></span> </td>
+    </tr>
+  </table>
 </div>
+
 </div>
