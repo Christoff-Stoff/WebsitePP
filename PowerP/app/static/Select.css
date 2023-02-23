@@ -64,3 +64,16 @@ input[type="date"]{
     cursor: pointer;
     border-radius: 3px;
 }
+
+#date-form {
+    position: sticky;
+    top: 180px;
+  }
+  
+  @media screen and (min-width: 768px) {
+    #date-form {
+      position: sticky;
+      top: 180px;
+    }
+  }
+  

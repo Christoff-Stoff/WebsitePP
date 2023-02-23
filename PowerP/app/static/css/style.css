@@ -86,7 +86,7 @@ a {
           transition: .3s all ease;
           border-radius: 30px; }
         .site-navbar .site-navigation .site-menu > li > a:hover > span {
-          background: #03cd11dc;
+          background: #04b40fdc;
           color: #fff;
           border-radius: 30px;
           display: inline-block; }

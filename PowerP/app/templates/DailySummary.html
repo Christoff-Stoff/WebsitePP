@@ -67,23 +67,21 @@
 
   <body > <!-- style="background-color: rgb(32, 32, 32);" -->
     <br></br>
-    <div class="container"style="margin-top: 150px;">
-
-
-
-      <form id="date-form" >
-        <div class="select-dropdown" style="width: fit-content;">
-          <select id="device-select" name="device_name"> 
-            {% for device in devices %}
-            <option value="{{ device['device_name'] }}">{{ device['device_name'] }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <!-- <label for="selected-date">Select a date:</label> -->
-        <p class="" style="margin: 4px;"></p>
-        <input type="date" id="selected-date" name="selected-date" value="2021-01-02">
-        <input id="submit-button" type="submit" value="Submit" style="border-radius: 10px; visibility: hidden;">
-      </form>
+    <form id="date-form" style="margin-left: 10%;" >
+      <div class="select-dropdown" style="width: fit-content;">
+        <select id="device-select" name="device_name"> 
+          {% for device in devices %}
+          <option value="{{ device['device_name'] }}">{{ device['device_name'] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- <label for="selected-date">Select a date:</label> -->
+      <p class="" style="margin: 4px;"></p>
+      <input type="date" id="selected-date" name="selected-date" value="2021-01-02">
+      <input id="submit-button" type="submit" value="Submit" style="border-radius: 10px; visibility: hidden;">
+    </form>
+    <div class="container"style="margin-top: 150px; position:sticky;">
+      
       
 <script>
 
@@ -160,6 +158,16 @@ window.onload=function(){
   refreshclick();
 };
 
+/* window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 1500) {
+    document.getElementById("device-select").style.top = "0";
+  } else {
+    document.getElementById("device-select").style.top = "-50px";
+  }
+} */
+
 </script>
       <!-- <select id="device-select" name="device_name">
         {% for device in devices %}
@@ -176,19 +184,22 @@ window.onload=function(){
 
       
 
-        <h1 style="text-align: center;">Hourly Energy Usage Plot</h1>
-        <div id="chart-container" style="text-align: center;">
+        
 
-            <object data="renHourly"
-                width="72%"
-                height="650"
-                type="image/jpeg"
-                overflow= "hidden"
-                id="renHourlyObj">
-                
-            </object>
-        </div>
+    </div>
+    <div class="container">
+      <h1 style="text-align: center;">Hourly Energy Usage Plot</h1>
+      <div id="chart-container" style="text-align: center;">
 
+          <object data="renHourly"
+              width="72%"
+              height="650"
+              type="image/jpeg"
+              
+              id="renHourlyObj">
+              
+          </object>
+      </div>
     </div>
     <div class="container">
       <h1 style="text-align: center;">Daily Energy Usage Plot</h1>
@@ -197,7 +208,7 @@ window.onload=function(){
               width="72%"
               height="650"
               type="image/jpeg"
-              overflow= "hidden"
+              
               id="renDailyObj">
               
           </object>
@@ -211,7 +222,7 @@ window.onload=function(){
               width="72%"
               height="650"
               type="image/jpeg"
-              overflow= "hidden"
+              
               id="renMonthlyObj">
           </object>
       </div>
