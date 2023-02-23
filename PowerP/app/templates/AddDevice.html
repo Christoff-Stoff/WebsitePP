@@ -12,12 +12,15 @@
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='Table.css')}}">
 
+
+
     <!-- HTML form for adding a device -->
-    <section>
-        <div class="container"style="margin-top: 150px;"></div>
-        <body style="background-color:rgb(175, 173, 173)">
+    <section style="width: 100%;">
+
+
             <br>
             <br>
+            <p class="" style="margin: 150px;"></p>
             <form method="post" action="{{ url_for('add_device') }}">
                 <p>
                     <div class="row justify-content-center">
@@ -26,7 +29,7 @@
                                 <h3 class="mb-4 text-center">Device Serial:</h3>
                                 <!-- <input type="text" id="device_name" name="device_name"> -->
                                 <input type="text" class="form-control" placeholder="Enter device serial number" id="device_name" name="device_name" required>
-                            </p>
+                            <p></p>
                                 <button type="submit" class="form-control btn btn-primary submit px-3">Add Device</button>
                                 <p class="" style="margin: 25px;"></p>
                                 <h1 style="text-align: center;">Your Devices</h1>
@@ -49,16 +52,15 @@
                     </div>
                     
                 </p>
-                <p>
 
             </form>
             
             <!-- HTML for displaying a user's devices -->
 
-        </body>
-    </div>
+
     </section>
     {% endblock %}
+
 
 
 

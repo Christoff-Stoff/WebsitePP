@@ -8242,7 +8242,7 @@ h1, h2, h3, h4, h5,
       transition: none; } }
   .form-control::-webkit-input-placeholder {
     /* Chrome/Opera/Safari */
-    color: rgba(255, 255, 255, 0.8) !important; }
+    color: rgba(255, 255, 255, 0.8) !important; }       /* Input text colour */
   .form-control::-moz-placeholder {
     /* Firefox 19+ */
     color: rgba(255, 255, 255, 0.8) !important; }

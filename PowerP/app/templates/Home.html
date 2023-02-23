@@ -16,17 +16,72 @@
     
     <!-- Style -->
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='Home.css')}}">
 
     <title>Power Partners</title>
   </head>
   <body  style="background-color:rgb(175, 173, 173)">
+    
 
-    <footer style="position: fixed;bottom: 0;width: 90%; margin-left: 5%;">
-      <main>
-        <h2>About Us</h2>
-        <p>We are a data visualization company dedicated to providing the best user experience for our customers. With our advanced technology, you can easily understand your data and make informed decisions.</p>
+    <div class="main-content">
+      <p class="" style="margin: 10px;"></p>
+      <section class="section-one">
+        <div class="image left">
+          <img src="{{url_for('static', filename='images/verdi.jpeg')}}" alt="Example image">
+        </div>
+        <div class="text right">
+          <h2><b>Innovative and simple solutions for complicated engineering problems</b></h2>
+          <p> Power Partners Group was established in 2019. Power Partners provides safe and profitable engineering and renewable energy solutions through its dynamic approach whilst building and maintaining strategic relationships with its clients. The Power Partners team has over two decades of combined experience in building and renewable energy services.</p>
+            Power Partners provides high quality engineering services in the building environment which include electrical engineering, electronic engineering and renewable energy solutions.</p>
+
+            
+            <p>Power Partners also owns and operates long-term commercial solar photovoltaic (“PV”) installations with direct electricity off-take agreements. Installations include roof and ground mounted structures.</p>
+        </div>
+      </section>
+      <section class="section-two">
+        <div class="text left">
+          <h2><b>Electrical Services</b></h2>
+          <p>The delivery of our consulting services and our accurate, value-adding designs is founded on the strength of the professional relationships between our firm and our clients. These enable us to walk the extra mile for our clients. Our dynamic electrical engineering team has developed highly accurate models which provide our clients with precise designs in support of:</p>
+          <ul>
+            <li> feasibility studies</li>
+            <li>power reticulation</li>
+            <li>load calculations and</li>
+            <li>lux level simulations and energy models.</li>
+          </ul>  
+          
+        </div>
+        <div class="image right">
+          <img src="{{url_for('static', filename='images/bitmap.png')}}"alt="Example image">
+        </div>
+      </section>
+      <section class="section-one">
+        <div class="image left">
+          <img src="{{url_for('static', filename='images/bitmap2.png')}}" alt="Example image">
+        </div>
+        <div class="text right">
+          <h2><b>Electronic Services</b></h2>
+          <p> Our electronic designs are integrated with our electrical projects to ensure effective and efficient collaboration between both services. Our electronic services include:</p>
+          <ul>
+            <li>fire detection and alarms;</li>
+            <li>voice evacuation systems;</li>
+            <li>audio visual and background music;</li>
+            <li>structured cabling systems;</li>
+            <li>PABX and communication systems;</li>
+            <li>security and CCTV systems;</li>
+            <li>building management systems; and</li>
+            <li>smart buildings (IoT).</li>
+            </ul>
+        </div>
+      </section>
+    </div>
+
+    <footer >
+      <main style="position: fixed;bottom: 0; background-color:rgba(175, 173, 173, 0.495); background: fill;">
+        <h3 style="margin-left: 5%;">About Us</h3>
+        <p style="margin-left: 5%;width: 90%;" >We are a data visualization company dedicated to providing the best user experience for our customers. With our advanced technology, you can easily understand your data and make informed decisions.</p>
+        <p style="margin-left: 5%;width: 90%;" >Copyright © 2023 by Power Partners</p>
       </main>
-      <p>Copyright © 2023 by Power Partners</p>
+      
     </footer>
 
     <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>

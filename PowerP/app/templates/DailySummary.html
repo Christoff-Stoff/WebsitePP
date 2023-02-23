@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <div data-role="header" data-position="fixed" style="  margin: 0;padding: 0;">
+      <header class="site-navbar" role="banner" style="background-color:rgba(175, 173, 173, 0.495); background: fill;margin-top: 0%;padding: 0; position: fixed;">
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-11 col-xl-2">
+                <h1 class="mb-0 site-logo"><a href="https://powerpartners.co.za" class="text-white mb-0"><img src="{{url_for('static', filename='images/Logo.png')}}" alt="Power Partners" style="width:200px;height:100px;"></a></h1>
+              </div>
+              <div class="col-12 col-md-10 d-none d-xl-block">
+                <nav class="site-navigation position-relative text-right" role="navigation">
+                  <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+                    <li><a href="Home"><span>Home</span></a></li>        
+                    <li><a href="Summary"><span>Daily Summary</span></a></li>
+                    {% if current_user.is_anonymous %}
+                    <li><a href="login"><span>Login</span></a></li>
+                    {% else %}
+                    <li><a href="logout"><span>Logout</span></a></li>
+                    {% endif %}
+                    <li><a href="addDevice"><span>Add Device</span></a></li>
+                    <li><a href="contact.html"><span>Contact</span></a></li>
+                  </ul>
+                </nav>
+              </div>
+              <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a></div>
+              </div>
+            </div>
+          </div>
+        </header>
+  </div>
+
 
     <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -19,53 +48,15 @@
     
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-    
-    
   </head>
 
 
   
 
-  <div data-role="header" data-position="fixed">
-    <header class="site-navbar" role="banner" style="background-color:rgb(175, 173, 173); background: fill;margin-top: 0;">
-
-        <div class="container">
-          <div class="row align-items-center">
-            
-            <div class="col-11 col-xl-2">
-              <h1 class="mb-0 site-logo"><a href="https://powerpartners.co.za" class="text-white mb-0"><img src="{{url_for('static', filename='images/Logo.png')}}" alt="Power Partners" style="width:200px;height:100px;"></a></h1>
-              
-            </div>
-            <div class="col-12 col-md-10 d-none d-xl-block">
-              <nav class="site-navigation position-relative text-right" role="navigation">
-  
-                <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
-                  <li><a href="Home"><span>Home</span></a></li>        
-                  <li><a href="Summary"><span>Daily Summary</span></a></li>
-                  {% if current_user.is_anonymous %}
-                  <li><a href="login"><span>Login</span></a></li>
-                  {% else %}
-                  <li><a href="logout"><span>Logout</span></a></li>
-                  {% endif %}
-                  <li><a href="addDevice"><span>Add Device</span></a></li>
-                  <li><a href="contact.html"><span>Contact</span></a></li>
-                </ul>
-              </nav>
-            </div>
-  
-  
-            <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a></div>
-  
-            </div>
-  
-          </div>
-        </div>
-        
-      </header>
-</div>
 
 
-  <body > <!-- style="background-color: rgb(32, 32, 32);" -->
+
+  <body> <!-- style="background-color: rgb(32, 32, 32);" -->
     <br></br>
     <form id="date-form" style="margin-left: 10%;" >
       <div class="select-dropdown" style="width: fit-content;">
