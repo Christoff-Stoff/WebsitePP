@@ -66,13 +66,13 @@ input[type="date"]{
 }
 
 #date-form {
-    position: sticky;
+    position: fixed;
     top: 180px;
   }
   
   @media screen and (min-width: 768px) {
     #date-form {
-      position: sticky;
+      position: fixed;
       top: 180px;
     }
   }
