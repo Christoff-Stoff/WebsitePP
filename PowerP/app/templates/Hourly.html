@@ -57,8 +57,7 @@ var realTimeChart = new Chart(ctx, {
     scales: {
       
       xAxes: [{
-        
-        //labels: ['0', '1', '2', '3', '4', '5','6','7','8','9','10', '11', '12', '13', '14', '15','16','17','18','19','20','21','22','23', '24'],
+
         scaleLabel: {
           display: true,
           labelString: 'Hour'
@@ -216,11 +215,8 @@ function plotHourly(data)
 //setInterval(updateChart, 10000);
 </script>
 
+<!-- Code for creating the table containing the sum values of the chart -->
 <div id="summary" style="text-align:center; ">
-  <!-- <p> Total Generated: <span id="generated"></span> &emsp;
-  Total Consumption: <span id="consumption"></span> &emsp;
-  Total Excess: <span id="excess"></span> &emsp;
-  Total Savings: <span id="savings"></span></p> -->
 
   <table class="rwd-table" style="  margin-left: 9%;
   margin-right: 1%;">

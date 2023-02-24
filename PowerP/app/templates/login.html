@@ -20,6 +20,7 @@
 					<div class="login-wrap p-0">
 		      	<h3 class="mb-4 text-center">Have an account?</h3>
                   <form class="signin-form" action="" method="post" novalidate>
+                    <!-- Obtain user information -->
                     {{ form.hidden_tag() }}
                     <p>
                         {{ form.username.label }}<br>
@@ -61,6 +62,7 @@
 	          	<a href="#" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-facebook mr-2"></span> Facebook</a>
 	          	<a href="#" class="px-2 py-2 ml-md-1 rounded"><span class="ion-logo-twitter mr-2"></span> Twitter</a>
 	          </div>
+              <!-- Link to register as a new user -->
               <p style="color: #fff">New User? <a href="{{ url_for('register') }}">Click this text to Register!</a></p>
 		      </div>
 				</div>

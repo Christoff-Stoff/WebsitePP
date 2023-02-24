@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  <!-- Navbar code -->
   <head>
     <div data-role="header" data-position="fixed" style="  margin: 0;padding: 0;">
       <header class="site-navbar" role="banner" style="background-color:rgba(175, 173, 173, 0.495); background: fill;margin-top: 0%;padding: 0; position: fixed;">
@@ -55,8 +56,8 @@
 
 
 
-
-  <body> <!-- style="background-color: rgb(32, 32, 32);" -->
+<!-- Device and date selector -->
+  <body style="background-color:rgba(175, 173, 173, 0.495); background: fill;"> <!-- style="background-color: rgb(32, 32, 32);" -->
     <br></br>
     <form id="date-form" style="margin-left: 10%;" >
       <div class="select-dropdown" style="width: fit-content;">
@@ -68,7 +69,7 @@
       </div>
       <!-- <label for="selected-date">Select a date:</label> -->
       <p class="" style="margin: 4px;"></p>
-      <input type="date" id="selected-date" name="selected-date" value="2021-01-02">
+      <input type="date" id="selected-date" name="selected-date" value="2021-01-02" >
       <input id="submit-button" type="submit" value="Submit" style="border-radius: 10px; visibility: hidden;">
     </form>
     <div class="container"style="margin-top: 150px; position:sticky;">
@@ -76,6 +77,7 @@
       
 <script>
 
+/* if the serial number or date is changed the chart automatically updates */
  document.getElementById('device-select').addEventListener('change', function() {
   document.getElementById('submit-button').click();
   setTimeout(function() {
@@ -83,6 +85,7 @@
   }, 200);
 });
 
+/* Function for pressing the refresh button */
 function refreshclick()
 {
   var htmlObject = document.getElementById("renHourlyObj");
@@ -105,6 +108,7 @@ document.getElementById('selected-date').addEventListener('change', function() {
   }, 200);
 });
 
+/* Send the data in order to filter db and plot chart */
   document.getElementById("date-form").addEventListener("submit", function(event) {
   event.preventDefault();
 
@@ -145,6 +149,7 @@ document.getElementById('selected-date').addEventListener('change', function() {
   console.log(selectedDevice);
 
 } */
+/* Plot charts on site load */
 window.onload=function(){
   refreshclick();
 };

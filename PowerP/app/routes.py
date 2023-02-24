@@ -133,7 +133,7 @@ def DSUm():
        # return render_template('summary.html', devices=devices, selected_device=selected_device, hourly_data=hourly_data) """
     
 
-    # Get a list of the user's devices from the database
+    # Get a list of the user's devices from the database and device to session
     selected_date = request.form.get('selected-date')
     session['selected_date'] = selected_date
     
@@ -293,29 +293,6 @@ def renMonthly():
 
 
 ########## Route to add device for logged in user to the db #######
-
-""" @app.route('/addDevice')
-def addDevice():
-    return render_template("AddDevice.html")
-
-@app.route('/add_device', methods=['POST'])
-def add_device():
-    # Get the current user ID from the session
-    user_id = current_user
-
-    # Get the device information from the form
-    device_id = request.form['device_id']
-    device_name = request.form['device_name']
-
-    # Add the device to the database
-    db.add_device(user_id, device_id, device_name)
-
-
-
-    # Redirect the user to a page that displays their devices
-    return redirect(url_for('devices')) """
-
-
 @app.route('/addDevice', methods=['GET', 'POST'])
 def add_device():
     if not current_user.is_authenticated:

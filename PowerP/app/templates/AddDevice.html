@@ -15,24 +15,26 @@
 
 
     <!-- HTML form for adding a device -->
-    <section style="width: 100%;">
-
+    <section style="width: 100%">
+<body>
 
             <br>
             <br>
             <p class="" style="margin: 150px;"></p>
-            <form method="post" action="{{ url_for('add_device') }}">
+            <form method="post" action="{{ url_for('add_device') }} ">
                 <p>
                     <div class="row justify-content-center">
                         <div class="col-md-6 col-lg-4">
                             <div class="login-wrap p-0">
                                 <h3 class="mb-4 text-center">Device Serial:</h3>
-                                <!-- <input type="text" id="device_name" name="device_name"> -->
-                                <input type="text" class="form-control" placeholder="Enter device serial number" id="device_name" name="device_name" required>
+                                <!-- Obtain the new device data -->
+                                <input type="text" class="form-control" placeholder="Enter device serial number" id="device_name" name="device_name" required >
                             <p></p>
                                 <button type="submit" class="form-control btn btn-primary submit px-3">Add Device</button>
                                 <p class="" style="margin: 25px;"></p>
                                 <h1 style="text-align: center;">Your Devices</h1>
+
+                                <!-- Display the user's devices -->
                                 <table class="rwd-table" style=" margin-left:auto;margin-right:auto;">
                                     <tr>
                                         <th>Device Serial</th>
@@ -57,7 +59,7 @@
             
             <!-- HTML for displaying a user's devices -->
 
-
+        </body>
     </section>
     {% endblock %}
 
