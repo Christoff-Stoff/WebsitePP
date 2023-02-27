@@ -32,11 +32,11 @@ class Device(db.Model):
     
     #Below we define the realationship to the device and the summaries.
     #The reason for this is we can create a Device object and can easily retrieve the summaries by just calling objectName.hourly_summaries.all()
-    data = db.relationship('Device_Data', backref= 'device', lazy='dynamic')
     hourly_summaries = db.relationship('Hourly_Summary', backref='device', lazy='dynamic')
     daily_summaries = db.relationship('Daily_Summary', backref='device', lazy='dynamic')
     monthly_summaries = db.relationship('Monthly_Summary', backref='device', lazy='dynamic')
     yearly_summaries = db.relationship('Yearly_Summary', backref='device', lazy='dynamic')
+    #data = db.relationship('Device_Data', backref='data_device', lazy=True)
 
     def __repr__(self): # For debugging purposes, will return <Device "Device_Name">
         return f"<Device id={self.id}, serial={self.serial}, user_id={self.user_id}>"
@@ -45,10 +45,12 @@ class Device(db.Model):
 #The data that is pulled for a device
 class Device_Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    serial = db.Column(db.String(50), primary_key = True, nullable = False)
     timestamp = db.Column(db.DateTime, index=True)
     generated_power= db.Column(db.Float)
     consumed_power= db.Column(db.Float)
-    device_id= db.Column(db.Integer, db.ForeignKey('device.id'))
+    device = db.relationship('Device', backref='data')
+    device_serial = db.Column(db.String(50), db.ForeignKey('device.serial'))
     #unit_cost = db.Column(db.Float)  -> How much it cost per kWh unit electricity, thus we calaculate the savings for that device
 
 

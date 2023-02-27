@@ -173,6 +173,7 @@ function plotHourly(data)
   var cons_sum_total=0;
   var exc_sum_total=0;
   clearPlot();
+  console.log(data);
   for (var i in data) {
     console.log(data[i].consumed_power)
     generated_power=parseFloat(data[i].generated_power);
@@ -195,6 +196,7 @@ function plotHourly(data)
     }
 
     //Plot the data
+    
     addData(date, generated_power,consumed_power,excess_power);
   }
 

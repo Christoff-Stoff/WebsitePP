@@ -2,17 +2,16 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from flask import render_template, flash, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user,login_required
-from app.models import User,Device,Hourly_Summary,Daily_Summary,Monthly_Summary
+from app.models import User,Device,Hourly_Summary,Daily_Summary,Monthly_Summary,Device_Data
 from werkzeug.urls import url_parse
 
 
 from flask import Flask, request, jsonify
 import mysql.connector
-
 #Debug using:
 #print(ValueToPrint, file=sys.stderr)
 
-import sys
+import sys,os
 
 defaultDate="2021-01-01"
 devName= None
@@ -75,6 +74,7 @@ def register():
 
 @app.route('/Home')
 def Home():
+    
     return render_template("Home.html", title='HomePage')
 
 
@@ -94,7 +94,7 @@ def DSUm():
                                   host=servername, database=dbname)
     cursor = cnx.cursor()
 
-
+    
     # Filter the data for the date supplied by the user
     """ user_id = current_user.id
     query = "SELECT * FROM Devices WHERE user_id = %s"
@@ -143,6 +143,7 @@ def SummaryPost():
     print(selected_device, file=sys.stderr)
     return None
 
+
 #########    Hourly flask start       ######
 #Hourly flask query data and return json
 @app.route('/hourly', methods=['POST'])
@@ -189,6 +190,7 @@ def renHourly():
 #----------    Hourly flask End   --------#
 
 
+
 #########    Daily flask start       ######
 #Daily flask query data and return json
 @app.route('/daily',  methods=['POST'])
@@ -229,6 +231,7 @@ def get_daily_data():
 def renDaily():
     return render_template("daily.html")
 #-------------    daily flask End   ----------#
+
 
 
 #########    Monthly flask start       ######
@@ -297,15 +300,18 @@ def add_device():
 
     # Render the devices.html template, passing in the list of devices
     return render_template('AddDevice.html', devices=devices, title= "Devices")
+#-------- Route add device end ------------------------------------
 
 
-#-------- Route add device end ----------
 
 ########## Route for contact page #######
 @app.route('/contact')
 def contact():
+    ReadExcel()
+    populate_hourly_table()
+    print("Populate DB", file=sys.stderr)
     return render_template("contact.html")
-#-------- Route for contact page end ----------
+#-------- Route for contact page end -----
 
 
 
@@ -328,7 +334,7 @@ def populate_daily():
                         excess_power_sum = EXCLUDED.excess_power_sum,
                         savings_sum = EXCLUDED.savings_sum;""")
 
-#-------- Route for Populating Daily Table ----------
+#-------- Route for Populating Daily Table ---------
 
 
 
@@ -358,7 +364,7 @@ def populate_monthly():
             excess_power_sum = EXCLUDED.excess_power_sum,
             savings_sum = EXCLUDED.savings_sum;
             """)
-#-------- Route for Populating Monthly Table ----------
+#-------- Route for Populating Monthly Table --------
 
 
 
@@ -389,4 +395,63 @@ def populate_yearly():
                         consumed_power_sum = EXCLUDED.consumed_power_sum,
                         excess_power_sum = EXCLUDED.excess_power_sum,
                         savings_sum = EXCLUDED.savings_sum;""")
-#-------- Route for Populating Yearly Table ----------
+#-------- Route for Populating Yearly Table --------
+
+
+
+########### Populate hourly table using Device Data ########
+def populate_hourly_table():
+
+    devices = Device.query.all()
+
+    for device in devices:
+        device_data = Device_Data.query.filter(Device_Data.device_serial == device.serial).all()
+        #print(device_data)
+        for data in device_data:
+            print(str(data.timestamp) + " id:" + str(device.id))
+            date = (data.timestamp)
+            generated_power= data.generated_power
+            consumed_power= (data.consumed_power)
+            hourlySummary = Hourly_Summary( device_id = device.id,
+                                            date = date,
+                                            generated_power=generated_power,
+                                            consumed_power=consumed_power,)
+            db.session.merge(hourlySummary)
+#----------- Populate hourly table using Device Data ------
+
+
+
+
+########### Import Excel and Populate Device Data ########
+import pandas as pd
+from datetime import datetime
+import openpyxl
+#Read excel file
+def ReadExcel():
+    file_path = os.path.abspath("app/data.xlsx")
+
+    df = pd.read_excel(file_path, sheet_name='Sheet1')
+
+    #Iterate over each row in the file
+    for index, row in df.iterrows():
+        # Check if the device already exists
+        device = Device.query.filter_by(serial =row['serial']).first()
+        if not device:
+            # Create a new device
+            device = Device(serial=row['serial'])
+            db.session.add(device)
+
+        # Create a new device data object
+        date = row['date']
+        devicedata = Hourly_Summary( device_id = device.id,
+                                    generated_power = row['generated_power'],
+                                    consumed_power = row['consumed_power'],
+                                    excess_power = row['excess_power'],
+                                    date = date
+                                    )
+        
+        #Add the new device data object to the database
+        db.session.add(devicedata)
+    # Commit changes
+    db.session.commit()
+#----------- Import Excel and Populate Device Data --------
