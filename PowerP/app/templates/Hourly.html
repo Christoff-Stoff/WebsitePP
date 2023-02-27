@@ -33,7 +33,6 @@ var realTimeChart = new Chart(ctx, {
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             borderColor: 'rgba(255, 99, 132, 1)',
             borderWidth: 1,
-
         },
         {
             label: 'Consumed Energy',
@@ -64,8 +63,11 @@ var realTimeChart = new Chart(ctx, {
         },
         ticks: {
           min: 0,
-          max: 24,
-          stepSize: 1
+          max: 23,
+          stepSize: 1,
+          callback: function(value, index, values) {
+            return value + 'h'; // Add 'kWh' unit to y-axis label
+          }
         }
       }],
       yAxes: [{
@@ -75,7 +77,10 @@ var realTimeChart = new Chart(ctx, {
           labelString: 'Watts'
         },
         ticks: {
-          beginAtZero: true
+          beginAtZero: true,
+          callback: function(value, index, values) {
+            return value + 'kWh'; // Add 'kWh' unit to y-axis label
+          }
         }
       }]
     }
@@ -89,9 +94,9 @@ realTimeChart.data.labels = hours;
 // Add data to the chart and plot it
 function addData(date, generated_power, consumed_power,excess_power) {
   realTimeChart.data.labels.push(date);
-  realTimeChart.data.datasets[0].data.push(generated_power);
-  realTimeChart.data.datasets[1].data.push(consumed_power);
-  realTimeChart.data.datasets[2].data.push(excess_power);
+  realTimeChart.data.datasets[0].data.push(generated_power/1000);
+  realTimeChart.data.datasets[1].data.push(consumed_power/1000);
+  realTimeChart.data.datasets[2].data.push(excess_power/1000);
   realTimeChart.update();
 }
 

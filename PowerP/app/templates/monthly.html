@@ -65,10 +65,13 @@ var realTimeChart = new Chart(ctx, {
       yAxes: [{
         scaleLabel: {
           display: true,
-          labelString: 'Watts'
+          labelString: 'kilo Watts [kW]'
         },
         ticks: {
-          beginAtZero: true
+          beginAtZero: true,
+          callback: function(value, index, values) {
+            return value + 'kWh'; // Add 'kWh' unit to y-axis label
+          }
         }
       }]
     }
@@ -82,9 +85,9 @@ var realTimeChart = new Chart(ctx, {
 // Add data to the chart and plot it
 function addData(date, generated_power, consumed_power,excess_power) {
   realTimeChart.data.labels.push(date);
-  realTimeChart.data.datasets[0].data.push(generated_power);
-  realTimeChart.data.datasets[1].data.push(consumed_power);
-  realTimeChart.data.datasets[2].data.push(excess_power);
+  realTimeChart.data.datasets[0].data.push(generated_power/1000);
+  realTimeChart.data.datasets[1].data.push(consumed_power/1000);
+  realTimeChart.data.datasets[2].data.push(excess_power/1000);
   realTimeChart.update();
 }
 

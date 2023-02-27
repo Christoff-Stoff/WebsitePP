@@ -21,17 +21,8 @@ devName= None
 @app.route('/index')
 @login_required
 def index():
-    devices = [
-        {
-            'owner':{'username':'Stoff'},
-            'Device_Name': 'Its a random serial number?'
-        },
-        {
-            'owner':{'username':'Power'},
-            'Device_Name':'Partners123'
-        }
-    ]
-    return render_template("index.html", title='Home Page', devices=devices)
+
+    return render_template("index.html", title='Home Page')
 
 
 #Login route, verifies if the usrer isn't already logged in or if the correct information is supplied
@@ -58,20 +49,6 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-@app.route('/login2')
-def login2():
-    return render_template('login2.html')
-@app.route('/loginInfo', methods=['POST'])
-def loginInfo():
-    user = User.query.filter_by(username=request.form['username']).first()
-    if user is None or not user.check_password(request.form['password-field']):
-        flash('Invalid username or password')
-        return redirect(url_for('login'))
-    login_user(user, remember=False)
-    next_page = request.args.get('next')
-    if not next_page or url_parse(next_page).netloc != '':
-        next_page =url_for('Home')
-    return redirect(next_page)
 
 
 
@@ -281,7 +258,7 @@ def get_monthly_data():
 
     # Create a list of dictionaries to store the data
     data = [{'generated_power_sum': row[0], 'year': row[1],'month':row[2], 'consumed_power_sum': row[3], 'excess_power_sum': row[4]} for row in result]
-    print(data[0]['excess_power_sum'], file=sys.stderr)
+
     # Return the data as JSON
     return jsonify(data)
 
@@ -319,7 +296,97 @@ def add_device():
     devices = [{'device_name': row[0], 'device_id': row[1]} for row in cursor.fetchall()]
 
     # Render the devices.html template, passing in the list of devices
-    return render_template('AddDevice.html', devices=devices)
+    return render_template('AddDevice.html', devices=devices, title= "Devices")
 
 
 #-------- Route add device end ----------
+
+########## Route for contact page #######
+@app.route('/contact')
+def contact():
+    return render_template("contact.html")
+#-------- Route for contact page end ----------
+
+
+
+########## Route for Populating Daily Table #######
+@app.route('/dailyPop')
+def populate_daily():
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+    # generate the daily summary for all devices
+    cursor.execute("""INSERT INTO daily__summary (device_id, date, generated_power_sum, consumed_power_sum, excess_power_sum, savings_sum)
+                    SELECT device_id, DATE(date), SUM(generated_power), SUM(consumed_power), SUM(excess_power), SUM(savings)
+                    FROM hourly__summary AS h
+                    GROUP BY device_id, DATE(h.date)
+                    ON CONFLICT (device_id, date) DO UPDATE
+                    SET generated_power_sum = EXCLUDED.generated_power_sum,
+                        consumed_power_sum = EXCLUDED.consumed_power_sum,
+                        excess_power_sum = EXCLUDED.excess_power_sum,
+                        savings_sum = EXCLUDED.savings_sum;""")
+
+#-------- Route for Populating Daily Table ----------
+
+
+
+########## Route for Populating Monthly Table #######
+@app.route('/monthlyPop')
+def populate_monthly():
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+    # generate the monthly summary for all devices
+    cursor.execute("""INSERT INTO monthly__summary (device_id, year, month, generated_power_sum, consumed_power_sum, excess_power_sum, savings_sum)
+        SELECT device_id,
+            EXTRACT(YEAR FROM date) AS year,
+            EXTRACT(MONTH FROM date) AS month,
+            SUM(generated_power_sum) AS generated_power_sum,
+            SUM(consumed_power_sum) AS consumed_power_sum,
+            SUM(excess_power_sum) AS excess_power_sum,
+            SUM(savings_sum) AS savings_sum
+        FROM daily_summary
+        GROUP BY device_id, year, month
+        ON CONFLICT (device_id, year, month) DO UPDATE
+        SET generated_power_sum = EXCLUDED.generated_power_sum,
+            consumed_power_sum = EXCLUDED.consumed_power_sum,
+            excess_power_sum = EXCLUDED.excess_power_sum,
+            savings_sum = EXCLUDED.savings_sum;
+            """)
+#-------- Route for Populating Monthly Table ----------
+
+
+
+########## Route for Populating Yearly Table #######
+@app.route('/yearlyPop', methods=['POST'])
+def populate_yearly():
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+    # generate the monthly summary for all devices
+    cursor.execute("""INSERT INTO yearly__summary (device_id, year, generated_power_sum, consumed_power_sum, excess_power_sum, savings_sum)
+                    SELECT device_id, YEAR(date) AS year, SUM(generated_power_sum) AS generated_power_sum,
+                        SUM(consumed_power_sum) AS consumed_power_sum, SUM(excess_power_sum) AS excess_power_sum,
+                        SUM(savings_sum) AS savings_sum
+                    FROM daily__summary
+                    GROUP BY device_id, YEAR(date)
+                    ON CONFLICT (device_id, year) DO UPDATE SET 
+                        generated_power_sum = EXCLUDED.generated_power_sum,
+                        consumed_power_sum = EXCLUDED.consumed_power_sum,
+                        excess_power_sum = EXCLUDED.excess_power_sum,
+                        savings_sum = EXCLUDED.savings_sum;""")
+#-------- Route for Populating Yearly Table ----------
