@@ -29,9 +29,7 @@ def index():
 def login():
     users = db.session.query(User).all()
     Devicess = db.session.query(Device).all()
-    Hourly_Summaries = db.session.query(Hourly_Summary).all()
     print(Devicess,file = sys.stderr)
-    print(Hourly_Summaries,file=sys.stderr)
     print(users,file=sys.stderr)
     if current_user.is_authenticated:
         return redirect(url_for('Home'))

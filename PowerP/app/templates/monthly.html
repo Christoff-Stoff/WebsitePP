@@ -65,12 +65,12 @@ var realTimeChart = new Chart(ctx, {
       yAxes: [{
         scaleLabel: {
           display: true,
-          labelString: 'kilo Watts [kW]'
+          labelString: 'Energy'
         },
         ticks: {
           beginAtZero: true,
           callback: function(value, index, values) {
-            return value + 'kWh'; // Add 'kWh' unit to y-axis label
+            return value + 'kW'; // Add 'kWh' unit to y-axis label
           }
         }
       }]
@@ -186,10 +186,12 @@ function plotMonthly(data)
   let totalSavings = (totalGenerated/1000) * someCostPerUnit;
 
   // now display the values in the desired format, for example:
-  document.getElementById("generated").innerHTML = (totalGenerated/1000).toFixed(2) +" kWh";
-  document.getElementById("consumption").innerHTML = (totalConsumption/1000).toFixed(2) +" kWh";
-  document.getElementById("excess").innerHTML = (totalExcess/1000).toFixed(2) +" kWh";
-  document.getElementById("savings").innerHTML = "R "+(totalSavings).toFixed(2);
+  document.getElementById("generated").innerHTML = (totalGenerated/1000).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0, useGrouping: true}).replace(',', ' ') +" kW";
+  document.getElementById("consumption").innerHTML = (totalConsumption/1000).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0, useGrouping: true}).replace(',', ' ') +" kW";
+  document.getElementById("excess").innerHTML = (totalExcess/1000).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0, useGrouping: true}).replace(',', ' ') +" kW";
+  document.getElementById("savings").innerHTML = "R "+(totalSavings).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0, useGrouping: true}).replace(',', ' ');
+
+
 
 }
 

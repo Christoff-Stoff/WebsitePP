@@ -7,11 +7,12 @@
 }
 .select-dropdown {
   position: relative;
-  background-color: #aaa;
+  background-color: rgba(141, 141, 141, 0.651);
+  border: 1px solid rgba(98, 98, 98, 0.651);
   border-radius: 4px;
 }
 .select-dropdown select {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: normal;
   max-width: 100%;
   padding:  6px 20px 6px 8px; 
@@ -50,15 +51,16 @@
     box-sizing: border-box;
 }
 input[type="date"]{
-    background-color: #aaa;
+    background-color: rgba(141, 141, 141, 0.651);
     padding: 4px 16px 4px 5px;/* 8px 24px 8px 10px; */
     position: absolute;
     font-family: "Roboto Mono",monospace;
     color: #ffffff;
-    font-size: 17px;
+    font-size: 14px;
     border: none;
     outline: none;
     border-radius: 5px;
+    border: 1px solid rgba(98, 98, 98, 0.651);
 }
 ::-webkit-calendar-picker-indicator{
     background-color: #ffffff;
