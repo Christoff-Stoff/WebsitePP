@@ -64,6 +64,10 @@ class Hourly_Summary(db.Model):
     savings = db.Column(db.Float)
     device_id= db.Column(db.Integer, db.ForeignKey('device.id'))
 
+    #__table_args__ = (db.UniqueConstraint('device_id', 'date', name='idx_device_date'), )
+    __table_args__ = (db.UniqueConstraint('device_id', 'date', name='uq_device_date_hourly_summary'),)
+
+
 
 #Links to Hourly summary in order to be able to display entire day's data
 #Also includes the sum total values for entire day
@@ -75,6 +79,9 @@ class Daily_Summary(db.Model):
     excess_power_sum= db.Column(db.Float)
     savings_sum = db.Column(db.Float)
     device_id= db.Column(db.Integer, db.ForeignKey('device.id'))
+
+    #__table_args__ = (db.UniqueConstraint('device_id', 'date', name='idx_device_date'), )
+    __table_args__ = (db.UniqueConstraint('device_id', 'date', name='uq_device_date_daily_summary'),)
 
 
 #Links to Daily summary in order to be able to display entire month's data
@@ -89,6 +96,9 @@ class Monthly_Summary(db.Model):
     savings_sum = db.Column(db.Float)
     device_id= db.Column(db.Integer, db.ForeignKey('device.id'))
 
+    #__table_args__ = (db.UniqueConstraint('device_id', 'month','year', name='idx_device_date'), )
+    __table_args__ = (db.UniqueConstraint('device_id', 'month', 'year', name='uq_device_date_monthly_summary'),)
+
 
 #Links to monthly summary in order to be able to display entire year's data
 #Also includes the sum total values for entire month
@@ -100,6 +110,9 @@ class Yearly_Summary(db.Model):
     excess_power_sum= db.Column(db.Float)
     savings_sum = db.Column(db.Float)
     device_id= db.Column(db.Integer, db.ForeignKey('device.id'))
+
+    #__table_args__ = (db.UniqueConstraint('device_id', 'year', name='idx_device_date'), )
+    __table_args__ = (db.UniqueConstraint('device_id', 'year', name='uq_device_date_yearly_summary'),)
 
 
 @login.user_loader

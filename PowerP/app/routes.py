@@ -288,8 +288,8 @@ def add_device():
 
         # Insert the new device into the database
         cursor = cnx.cursor()
-        query = "INSERT INTO device (serial, user_id) VALUES (%s, %s)"
-        cursor.execute(query, (device_name, user_id))
+        query = "INSERT INTO device (serial, user_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE user_id = %s"
+        cursor.execute(query, (device_name, user_id, user_id))
         cnx.commit()
 
     # Get a list of the user's devices from the database
@@ -307,16 +307,12 @@ def add_device():
 ########## Route for contact page #######
 @app.route('/contact')
 def contact():
-    ReadExcel()
-    populate_hourly_table()
-    print("Populate DB", file=sys.stderr)
     return render_template("contact.html")
 #-------- Route for contact page end -----
 
 
 
 ########## Route for Populating Daily Table #######
-@app.route('/dailyPop')
 def populate_daily():
 
     # Connect to database server
@@ -328,18 +324,18 @@ def populate_daily():
                     SELECT device_id, DATE(date), SUM(generated_power), SUM(consumed_power), SUM(excess_power), SUM(savings)
                     FROM hourly__summary AS h
                     GROUP BY device_id, DATE(h.date)
-                    ON CONFLICT (device_id, date) DO UPDATE
-                    SET generated_power_sum = EXCLUDED.generated_power_sum,
-                        consumed_power_sum = EXCLUDED.consumed_power_sum,
-                        excess_power_sum = EXCLUDED.excess_power_sum,
-                        savings_sum = EXCLUDED.savings_sum;""")
+                    ON DUPLICATE KEY UPDATE
+                    generated_power_sum = VALUES(generated_power_sum),
+                    consumed_power_sum = VALUES(consumed_power_sum),
+                    excess_power_sum = VALUES(excess_power_sum),
+                    savings_sum = VALUES(savings_sum);""")
+    cnx.commit()
 
 #-------- Route for Populating Daily Table ---------
 
 
 
 ########## Route for Populating Monthly Table #######
-@app.route('/monthlyPop')
 def populate_monthly():
 
     # Connect to database server
@@ -350,26 +346,27 @@ def populate_monthly():
     # generate the monthly summary for all devices
     cursor.execute("""INSERT INTO monthly__summary (device_id, year, month, generated_power_sum, consumed_power_sum, excess_power_sum, savings_sum)
         SELECT device_id,
-            EXTRACT(YEAR FROM date) AS year,
-            EXTRACT(MONTH FROM date) AS month,
+            YEAR(date) AS year,
+            MONTH(date) AS month,
             SUM(generated_power_sum) AS generated_power_sum,
             SUM(consumed_power_sum) AS consumed_power_sum,
             SUM(excess_power_sum) AS excess_power_sum,
             SUM(savings_sum) AS savings_sum
-        FROM daily_summary
-        GROUP BY device_id, year, month
-        ON CONFLICT (device_id, year, month) DO UPDATE
-        SET generated_power_sum = EXCLUDED.generated_power_sum,
-            consumed_power_sum = EXCLUDED.consumed_power_sum,
-            excess_power_sum = EXCLUDED.excess_power_sum,
-            savings_sum = EXCLUDED.savings_sum;
+
+            FROM daily__summary
+            GROUP BY device_id, year(date), month(date)
+            ON DUPLICATE KEY UPDATE
+            generated_power_sum = VALUES(generated_power_sum),
+            consumed_power_sum = VALUES(consumed_power_sum),
+            excess_power_sum = VALUES(excess_power_sum),
+            savings_sum = VALUES(savings_sum);
             """)
+    cnx.commit()
 #-------- Route for Populating Monthly Table --------
 
 
 
 ########## Route for Populating Yearly Table #######
-@app.route('/yearlyPop', methods=['POST'])
 def populate_yearly():
 
     # Connect to database server
@@ -385,16 +382,17 @@ def populate_yearly():
 
     # generate the monthly summary for all devices
     cursor.execute("""INSERT INTO yearly__summary (device_id, year, generated_power_sum, consumed_power_sum, excess_power_sum, savings_sum)
-                    SELECT device_id, YEAR(date) AS year, SUM(generated_power_sum) AS generated_power_sum,
+                    SELECT device_id, year, SUM(generated_power_sum) AS generated_power_sum,
                         SUM(consumed_power_sum) AS consumed_power_sum, SUM(excess_power_sum) AS excess_power_sum,
                         SUM(savings_sum) AS savings_sum
-                    FROM daily__summary
-                    GROUP BY device_id, YEAR(date)
-                    ON CONFLICT (device_id, year) DO UPDATE SET 
-                        generated_power_sum = EXCLUDED.generated_power_sum,
-                        consumed_power_sum = EXCLUDED.consumed_power_sum,
-                        excess_power_sum = EXCLUDED.excess_power_sum,
-                        savings_sum = EXCLUDED.savings_sum;""")
+                    FROM monthly__summary
+                    GROUP BY device_id, year
+                    ON DUPLICATE KEY UPDATE
+                    generated_power_sum = VALUES(generated_power_sum),
+                    consumed_power_sum = VALUES(consumed_power_sum),
+                    excess_power_sum = VALUES(excess_power_sum),
+                    savings_sum = VALUES(savings_sum);""")
+    cnx.commit()
 #-------- Route for Populating Yearly Table --------
 
 
@@ -408,7 +406,7 @@ def populate_hourly_table():
         device_data = Device_Data.query.filter(Device_Data.device_serial == device.serial).all()
         #print(device_data)
         for data in device_data:
-            print(str(data.timestamp) + " id:" + str(device.id))
+            
             date = (data.timestamp)
             generated_power= data.generated_power
             consumed_power= (data.consumed_power)
@@ -455,3 +453,37 @@ def ReadExcel():
     # Commit changes
     db.session.commit()
 #----------- Import Excel and Populate Device Data --------
+
+
+############ Route to populate DB using Excel ###########
+@app.route('/ExcelPop')
+def ExcelPop():
+    ReadExcel()
+    populate_hourly_table()
+
+    return "Population Complete"
+#----------- Route to populate DB using Excel -----------
+
+@app.route('/PopSum')
+def PopSum():
+    populate_daily()
+    populate_monthly()
+    populate_yearly()
+    return "Summary Population Complete"
+
+@app.route('/ClearDB')
+def ClearDB():
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
+
+    # generate the monthly summary for all devices
+    cursor.execute(""" DELETE FROM hourly__summary """)
+    cursor.execute(""" DELETE FROM daily__summary """)
+    cursor.execute(""" DELETE FROM monthly__summary """)
+    cursor.execute(""" DELETE FROM yearly__summary """)
+
+    cnx.commit()
+
+    return "Summaries Cleared"
