@@ -20,6 +20,15 @@
 				<div class="col-md-6 col-lg-4">
 					<div class="login-wrap p-0">
 		      	<h3 class="mb-4 text-center">Have an account?</h3>
+                  {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                  <ul>
+                      {% for message in messages %}
+                      <li style="text-align: center;">{{ message }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                  {% endwith %}
                   <form class="signin-form" action="" method="post" novalidate>
                     <!-- Obtain user information -->
                     {{ form.hidden_tag() }}

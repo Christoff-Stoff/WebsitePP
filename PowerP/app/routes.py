@@ -112,7 +112,7 @@ def DSUm():
     selected_date = request.form.get('selected-date')
     session['selected_date'] = selected_date
     
-    selected_device = request.form.get('device_name') or session.get('selected_device')
+    selected_device = request.form.get('device_name')
     devName= request.form.get('device_name') or session.get('selected_device')
     session['selected_device'] =selected_device
     
@@ -399,6 +399,10 @@ def populate_yearly():
 def populate_hourly_table():
 
     devices = Device.query.all()
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
 
     for device in devices:
         device_data = Device_Data.query.filter(Device_Data.device_serial == device.serial).all()
@@ -408,11 +412,26 @@ def populate_hourly_table():
             date = (data.timestamp)
             generated_power= data.generated_power
             consumed_power= (data.consumed_power)
+            excess_power= data.excess_power
+            savings= data.savings
             hourlySummary = Hourly_Summary( device_id = device.id,
                                             date = date,
                                             generated_power=generated_power,
-                                            consumed_power=consumed_power,)
-            db.session.merge(hourlySummary)
+                                            consumed_power=consumed_power,
+                                            excess_power = excess_power,
+                                            savings= savings)
+            
+            #Duplication prevention
+            cursor.execute(""" INSERT INTO hourly__summary(device_id, date, generated_power, consumed_power, excess_power, savings)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+            generated_power = VALUES(generated_power),
+            consumed_power = VALUES(consumed_power),
+            excess_power = VALUES(excess_power),
+            savings = VALUES(savings);""", (hourlySummary.device_id, hourlySummary.date, hourlySummary.generated_power, hourlySummary.consumed_power, hourlySummary.excess_power, hourlySummary.savings))
+
+            cnx.commit()
+            #db.session.merge(hourlySummary)
 #----------- Populate hourly table using Device Data ------
 
 
@@ -457,7 +476,7 @@ def ReadExcel():
 @app.route('/ExcelPop')
 def ExcelPop():
     ReadExcel()
-    populate_hourly_table()
+    #populate_hourly_table()
 
     return "Population Complete"
 #----------- Route to populate DB using Excel -----------
