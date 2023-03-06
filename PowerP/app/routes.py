@@ -424,6 +424,7 @@ def populate_hourly_table():
             #Duplication prevention
             cursor.execute(""" INSERT INTO hourly__summary(device_id, date, generated_power, consumed_power, excess_power, savings)
             VALUES (%s, %s, %s, %s, %s, %s)
+            GROUP BY device_id, date
             ON DUPLICATE KEY UPDATE
             generated_power = VALUES(generated_power),
             consumed_power = VALUES(consumed_power),
