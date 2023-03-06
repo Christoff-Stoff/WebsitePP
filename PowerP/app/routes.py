@@ -210,8 +210,8 @@ def get_daily_data():
 
 
 
-    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM daily__summary ds JOIN device d ON ds.device_id = d.id WHERE MONTH(ds.date) = MONTH(%s) AND d.serial = %s"
-    cursor.execute(query, (selected_date,device_name))
+    query = "SELECT generated_power_sum,DATE(date) AS date,consumed_power_sum,excess_power_sum FROM daily__summary ds JOIN device d ON ds.device_id = d.id WHERE MONTH(ds.date) = MONTH(%s) AND YEAR(ds.date) = YEAR(%s) AND d.serial = %s"
+    cursor.execute(query, (selected_date,selected_date,device_name))
     result = cursor.fetchall()
 
     # Close the database connection
@@ -447,7 +447,10 @@ def ReadExcel():
     file_path = os.path.abspath("app/data.xlsx")
 
     df = pd.read_excel(file_path, sheet_name='Sheet1')
-
+    # Connect to database server
+    cnx = mysql.connector.connect(user=username, password=password,
+                                  host=servername, database=dbname)
+    cursor = cnx.cursor()
     #Iterate over each row in the file
     for index, row in df.iterrows():
         # Check if the device already exists
@@ -458,18 +461,30 @@ def ReadExcel():
             db.session.add(device)
 
         # Create a new device data object
-        date = row['date']
-        devicedata = Hourly_Summary( device_id = device.id,
-                                    generated_power = row['generated_power'],
-                                    consumed_power = row['consumed_power'],
-                                    excess_power = row['excess_power'],
-                                    date = date
-                                    )
+        date = row['date']           
+        generated_power= row['generated_power']
+        consumed_power= row['consumed_power']
+        excess_power= row['excess_power']
+        savings= row['savings']
+        hourlySummary = Hourly_Summary( device_id = device.id,
+                                        date = date,
+                                        generated_power=generated_power,
+                                        consumed_power=consumed_power,
+                                        excess_power = excess_power,
+                                        savings= savings)
         
-        #Add the new device data object to the database
-        db.session.add(devicedata)
+        #Duplication prevention
+        cursor.execute(""" INSERT INTO hourly__summary(device_id, date, generated_power, consumed_power, excess_power, savings)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+        generated_power = VALUES(generated_power),
+        consumed_power = VALUES(consumed_power),
+        excess_power = VALUES(excess_power),
+        savings = VALUES(savings);""", (hourlySummary.device_id, hourlySummary.date, hourlySummary.generated_power, hourlySummary.consumed_power, hourlySummary.excess_power, hourlySummary.savings))
+
+        
     # Commit changes
-    db.session.commit()
+    cnx.commit()
 #----------- Import Excel and Populate Device Data --------
 
 
