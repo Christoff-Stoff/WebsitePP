@@ -78,10 +78,10 @@ def Home():
 
 #### DB Setup, Note this is just a test db and the correct DB is setup in the config.py #####
 # The reason for this DB is just for testing purposes
-servername = "127.0.0.1"
-username = "root"
-password = "PowerPartners1"
-dbname = "PP_DB"
+servername = "sql7.freemysqlhosting.net"
+username = "sql7605345"
+password = "cgKu75zzhf"
+dbname = "sql7605345"
 
 
 @app.route('/Summary',methods=['GET','POST'])
